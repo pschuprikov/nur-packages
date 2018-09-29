@@ -47,7 +47,6 @@ stdenv.mkDerivation rec {
     description = "A Tcl/C++ interface";
     homepage = http://otcl-tclcl.sourceforge.net/tclcl/;
     license = licenses.free;
-    maintainers = [ maintainers.pschuprikov ];
     platforms = platforms.unix;
   };
 }
