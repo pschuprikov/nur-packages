@@ -46,5 +46,5 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ procps cpio ];
 
-  sourceRoot = "${name}-src/c++";
+  sourceRoot = "${name}+-src/c++";
 }
