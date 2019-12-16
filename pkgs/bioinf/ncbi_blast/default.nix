@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
       'CXXFLAGS="-Wno-format-security"'
       'CFLAGS="-Wno-format-security"'
       '-j'
-      '-l4'
+      "-l''${NIX_BUILD_CORES}"
     )
   '';
 
