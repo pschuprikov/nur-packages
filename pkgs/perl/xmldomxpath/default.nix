@@ -14,6 +14,5 @@ buildPerlPackage rec {
   propagatedBuildInputs = [ XMLDOM XMLXPathEngine ];
   meta = {
     description = "Perl extension to add XPath support to XML::DOM, using XML::XPath engine";
-    license = stdenv.lib.licenses.unknown;
   };
 }

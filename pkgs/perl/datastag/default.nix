@@ -10,6 +10,5 @@ buildPerlPackage rec {
   propagatedBuildInputs = [ IOString ];
   meta = {
     description = "Structured Tags";
-    license = stdenv.lib.licenses.unknown;
   };
 }
