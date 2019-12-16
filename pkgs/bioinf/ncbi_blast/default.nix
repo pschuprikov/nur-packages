@@ -3,7 +3,7 @@ stdenv.mkDerivation rec {
   version = "2.9.0+";
   name = "ncbi-blast-${version}";
   src = fetchurl {
-    url = "ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/${name}-src.tar.gz";
+    url = "https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/${name}-src.tar.gz";
     sha256 = "sha256:0my2rpd1bln05sxnp4c5wk5j5y6yx56vi38pzicjfhh9g8nwr453";
   };
 
