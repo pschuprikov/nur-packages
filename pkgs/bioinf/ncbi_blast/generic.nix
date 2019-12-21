@@ -1,8 +1,12 @@
 { version, sha256, postPatch ? "", patches ? [] }:
 { lib, stdenv, fetchurl, coreutils, procps, cpio, zlib, bzip2, pcre, lmdb }:
 let oldPostPatch = postPatch;
+    oldPatches = patches;
 in stdenv.mkDerivation rec {
-  inherit version patches;
+  inherit version;
+
+  patches = oldPatches ++ lib.optional stdenv.isDarwin ./ncbi_test.patch;
+
   name = "ncbi-blast-${version}";
   src = fetchurl {
     url = "https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/${version}/${name}+-src.tar.gz";

@@ -1,0 +1,20 @@
+--- ncbi-blast-2.9.0+-src/src/build-system/configure	2019-12-21 19:59:15.812299077 +0100
++++ ncbi-blast-2.9.0+-src-new/src/build-system/configure	2019-12-21 19:57:21.156700823 +0100
+@@ -8792,7 +8792,7 @@
+   (exit $ac_status); }; }; then
+   ncbi_cv_sys_with64_ok=yes
+ else
+-  echo "$as_me: failed program was:" >&5
++  echo "$as_me: failed program was:" >&2
+ sed 's/^/| /' conftest.$ac_ext >&5
+ 
+ 	ncbi_cv_sys_with64_ok=no
+@@ -8805,7 +8805,7 @@
+ echo "${ECHO_T}$ncbi_cv_sys_with64_ok" >&6; }
+    if test "$ncbi_cv_sys_with64_ok" = no; then
+       { { echo "$as_me:$LINENO: error: cannot continue; please try different options" >&5
+-echo "$as_me: error: cannot continue; please try different options" >&2;}
++echo "$as_me: error: cannot continue; please try different options $CXXFLAGS $LIBS $LDFLAGS" >&2;}
+    { (exit 1); exit 1; }; }
+    fi
+ fi
