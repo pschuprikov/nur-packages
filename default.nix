@@ -40,7 +40,9 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
 
   perlPackages = self.callPackage ./pkgs/perl-packages.nix { 
     inherit (pkgs) perlPackages; 
-    } // pkgs.perlPackages;
+  } // pkgs.perlPackages // {
+    recurseForDerivations = false;
+  };
 
   inherit (perlPackages) BioPerl BioRoary BioSearchIOhmmer;
 
