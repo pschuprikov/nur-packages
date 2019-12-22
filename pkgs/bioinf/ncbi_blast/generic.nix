@@ -44,6 +44,8 @@ in stdenv.mkDerivation rec {
 
   configureFlags = [
     "--with-dll"
+    "--without-autodep"
+    "--without-makefile-auto-update"
     "--without-boost"
   ];
 
