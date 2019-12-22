@@ -31,7 +31,9 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
 
   # TODO: mark as no build
   #ncbi_blast_2_6_0 = self.callPackage ./pkgs/bioinf/ncbi_blast/2_6_0.nix { };
-  ncbi_blast_2_9_0 = self.callPackage ./pkgs/bioinf/ncbi_blast/2_9_0.nix { };
+  ncbi_blast_2_9_0 = self.callPackage ./pkgs/bioinf/ncbi_blast/2_9_0.nix { 
+    inherit (pkgs.darwin.apple_sdk.frameworks) ApplicationServices; 
+  };
   ncbi_blast = ncbi_blast_2_9_0;
 
   ncbi_tools = self.callPackage ./pkgs/bioinf/ncbi_tools { };

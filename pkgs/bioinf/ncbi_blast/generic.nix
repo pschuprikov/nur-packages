@@ -1,5 +1,5 @@
 { version, sha256, postPatch ? "", patches ? [] }:
-{ lib, stdenv, fetchurl, coreutils, procps, cpio, zlib, bzip2, pcre, lmdb }:
+{ lib, stdenv, fetchurl, coreutils, procps, cpio, zlib, bzip2, pcre, lmdb, ApplicationServices }:
 let oldPostPatch = postPatch;
     oldPatches = patches;
 in stdenv.mkDerivation rec {
@@ -54,7 +54,7 @@ in stdenv.mkDerivation rec {
     )
   '';
 
-  buildInputs = [ procps cpio ];
+  buildInputs = [ procps cpio ] ++ lib.optionals stdenv.isDarwin [ ApplicationServices ];
 
   nativeBuildInputs = [ zlib bzip2 pcre lmdb ];
 
