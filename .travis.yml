@@ -47,9 +47,9 @@ after_success:
 after_failure:
   - if [ -n "${CACHIX_CACHE}" ]; then (
         for x in $(nix-instantiate ci.nix -A cacheOutputs 2>/dev/null); do 
-            outputs="$(nix-store --query --outputs $x 2>/dev/null)"; 
-            if [ -e $x ] && [ -e $z ]; then 
-                echo $outputs; 
+            output="$(nix-store --query --outputs $x 2>/dev/null)"; 
+            if [ -e $x ] && [ -e $output ]; then 
+                echo $output; 
             fi; 
         done
       ) | cachix push "${CACHIX_CACHE}"; fi
