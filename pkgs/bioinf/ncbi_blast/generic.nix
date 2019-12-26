@@ -1,11 +1,10 @@
 { version, sha256, postPatch ? "", patches ? [] }:
 { lib, stdenv, fetchurl, coreutils, procps, cpio, zlib, bzip2, pcre, lmdb, ApplicationServices }:
-let oldPostPatch = postPatch;
-    oldPatches = patches;
+let oldPostPatch = postPatch; oldPatches = patches;
 in stdenv.mkDerivation rec {
   inherit version;
 
-  patches = oldPatches ++ lib.optional stdenv.isDarwin ./ncbi_test.patch;
+  patches = oldPatches;
 
   name = "ncbi-blast-${version}";
   src = fetchurl {
@@ -32,6 +31,7 @@ in stdenv.mkDerivation rec {
         --replace "/bin/\$base_action" "\$base_action"\
         --replace "/bin/\$LN_S" "\$LN_S"\
         --replace "/usr/bin/dirname" "dirname" \
+        --replace "/usr/bin/sort" "sort" \
         2>/dev/null
     done
     substituteInPlace ./src/build-system/helpers/run_with_lock.c \
@@ -39,10 +39,12 @@ in stdenv.mkDerivation rec {
   '' + "\n" + oldPostPatch;
 
   preConfigure = ''
-    export AR="$AR cr"
+    unset AR
   '';
 
   configureFlags = [
+    # with flat make file we can use all_projects not to build everything
+    "--with-flat-makefile"
     "--with-dll"
     "--without-autodep"
     "--without-makefile-auto-update"
@@ -53,6 +55,7 @@ in stdenv.mkDerivation rec {
     makeFlagsArray+=(
       '-j'
       "-l''${NIX_BUILD_CORES}"
+      'all_projects=app/'
     )
   '';
 
@@ -65,11 +68,4 @@ in stdenv.mkDerivation rec {
   meta = with stdenv.lib; {
     platforms = platforms.unix;
   };
-} // lib.optionalAttrs stdenv.isDarwin {
-  configurePhase = ''
-    echo "HI!!! It's me"
-    cat config.log
-    ./configure $configureFlags || cat config.log
-  '';
 }
-
