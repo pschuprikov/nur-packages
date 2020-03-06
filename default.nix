@@ -23,6 +23,8 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   infernal = self.callPackage ./pkgs/bioinf/infernal { };
   cd-hit = self.callPackage ./pkgs/bioinf/cd-hit { };
 
+  mariadbpp = self.callPackage ./pkgs/mariadbpp { };
+
   splitstree = self.callPackage ./pkgs/bioinf/splitstree { };
 
   abricate = self.callPackage ./pkgs/bioinf/abricate { };
