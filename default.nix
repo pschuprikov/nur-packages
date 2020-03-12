@@ -31,14 +31,7 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
 
   any2fasta = self.callPackage ./pkgs/bioinf/any2fasta { };
 
-  easyfig = pkgs.pythonPackages.callPackage ./pkgs/bioinf/easyfig { inherit ncbi_blast; };
-
-  # TODO: mark as no build
-  #ncbi_blast_2_6_0 = self.callPackage ./pkgs/bioinf/ncbi_blast/2_6_0.nix { };
-  ncbi_blast_2_9_0 = self.callPackage ./pkgs/bioinf/ncbi_blast/2_9_0.nix { 
-    inherit (pkgs.darwin.apple_sdk.frameworks) ApplicationServices; 
-  };
-  ncbi_blast = ncbi_blast_2_9_0;
+  easyfig = pkgs.pythonPackages.callPackage ./pkgs/bioinf/easyfig { };
 
   ncbi_tools = self.callPackage ./pkgs/bioinf/ncbi_tools { };
   aragorn = self.callPackage ./pkgs/bioinf/aragorn { };

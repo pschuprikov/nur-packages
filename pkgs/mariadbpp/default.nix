@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, mariadb-connector-c }:
+{ stdenv, fetchFromGitHub, cmake, mariadb-connector-c ? null }:
 stdenv.mkDerivation rec {
   version = "HEAD";
   name = "mariadbpp-${version}";
@@ -12,4 +12,8 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ cmake mariadb-connector-c ];
+
+  meta = {
+    broken = isNull mariadb-connector-c;
+  };
 }
