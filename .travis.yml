@@ -12,18 +12,8 @@ jobs:
   include:
   - env: NIX_CHANNEL=https://nixos.org/channels/nixpkgs-unstable
     os: linux
-  - env: NIX_CHANNEL=https://nixos.org/channels/nixos-19.09
+  - env: NIX_CHANNEL=https://nixos.org/channels/nixos-20.03
     os: linux
-  - env: NIX_CHANNEL=https://nixos.org/channels/nixpkgs-unstable
-    os: osx
-    language: generic
-    before_install:
-    - curl https://nixos.org/nix/install | sh
-    - source /Users/travis/.nix-profile/etc/profile.d/nix.sh
-  allow_failures:
-  - env: NIX_CHANNEL=https://nixos.org/channels/nixpkgs-unstable
-    os: osx
-    
 
 install:
   - nix --version
