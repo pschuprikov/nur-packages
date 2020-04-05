@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, makeWrapper, openjdk12 }:
+{ lib, stdenv, fetchurl, makeWrapper, openjdk }:
 stdenv.mkDerivation rec {
   version = "4.15.1";
   name = "SplitsTree-${version}";
@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ makeWrapper ];
 
   installPhase = ''
-    export INSTALL4J_JAVA_HOME=${openjdk12.home}
+    export INSTALL4J_JAVA_HOME=${openjdk.home}
     #sh $src -q -dir $out
     sh $src -q
     install -d $out/bin
@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
     substituteInPlace $out/bin/SplitsTree \
       --replace "app_home=." "app_home=$out/lib"
     wrapProgram $out/bin/SplitsTree \
-      --set INSTALL4J_JAVA_HOME ${openjdk12.home}
+      --set INSTALL4J_JAVA_HOME ${openjdk.home}
   '';
 
   meta = {

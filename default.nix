@@ -26,7 +26,9 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
 
   mariadbpp = self.callPackage ./pkgs/mariadbpp { };
 
-  splitstree = self.callPackage ./pkgs/bioinf/splitstree { };
+  splitstree = self.callPackage ./pkgs/bioinf/splitstree {
+    openjdk = pkgs.openjdk12 or pkgs.openjdk13;
+  };
 
   abricate = self.callPackage ./pkgs/bioinf/abricate { };
 
