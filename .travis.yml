@@ -28,6 +28,8 @@ install:
   - if [ -n "${CACHIX_CACHE}" ]; then cachix use "${CACHIX_CACHE}"; fi
   - nix-channel --add "${NIX_CHANNEL}" nixpkgs
   - travis_retry nix-channel --update
+  - nix-channel --list
+  - nix-instantiate --eval -E 'with import <nixpkgs> {}; lib.version or lib.nixpkgsVersion'
 
 script:
   - timeout 40m nix-build ci.nix -A buildOutputs
