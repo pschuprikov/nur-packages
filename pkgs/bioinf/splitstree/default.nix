@@ -34,5 +34,6 @@ stdenv.mkDerivation rec {
   meta = {
     platforms = stdenv.lib.platforms.linux;
     lincense = stdenv.lib.licenses.unfree;
+    broken = lib.versions.major openjdk.version == "14";
   };
 }
