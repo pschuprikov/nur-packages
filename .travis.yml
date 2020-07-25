@@ -26,11 +26,8 @@ install:
   - if [ -n "${CACHIX_CACHE}" ]; then travis_retry nix-channel --update; fi
   - if [ -n "${CACHIX_CACHE}" ]; then nix-env -iA cachix -f https://cachix.org/api/v1/install; fi
   - if [ -n "${CACHIX_CACHE}" ]; then cachix use "${CACHIX_CACHE}"; fi
-  - nix-channel --add "${NIX_CHANNEL}" nixpkgs
-  - travis_retry nix-channel --update
-  - nix-channel --list
-  - nix-instantiate --eval -E 'with import <nixpkgs> {}; lib.version or lib.nixpkgsVersion'
-  - echo $NIX_PATH
+  - sudo nix-channel --add "${NIX_CHANNEL}" nixpkgs
+  - travis_retry sudo nix-channel --update
 
 script:
   - timeout 40m nix-build ci.nix -A buildOutputs
