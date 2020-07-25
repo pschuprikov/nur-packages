@@ -13,7 +13,7 @@ env:
 
 jobs:
   include:
-  - env: NIX_CHANNEL=https://nixos.org/channels/nixpkgs-unstable
+  - env: NIX_CHANNEL=https://nixos.org/channels/nixos-unstable
     os: linux
   - env: NIX_CHANNEL=https://nixos.org/channels/nixos-20.03
     os: linux
