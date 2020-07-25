@@ -1,5 +1,8 @@
 language: nix
-nix: 2.3
+nix: 2.3.4
+
+sudo: false
+
 
 env:
   global:
@@ -17,6 +20,9 @@ jobs:
 
 install:
   - nix --version
+  # for cachix we need travis to be a trusted nix user
+  - echo "trusted-users = $USER" | sudo tee -a /etc/nix/nix.conf
+  - sudo systemctl restart nix-daemon
   - if [ -n "${CACHIX_CACHE}" ]; then travis_retry nix-channel --update; fi
   - if [ -n "${CACHIX_CACHE}" ]; then nix-env -iA cachix -f https://cachix.org/api/v1/install; fi
   - if [ -n "${CACHIX_CACHE}" ]; then cachix use "${CACHIX_CACHE}"; fi
@@ -31,7 +37,7 @@ script:
 
 after_success:
   - if [ -n "${CACHIX_CACHE}" ]; then nix-build ci.nix -A cacheOutputs | cachix push "${CACHIX_CACHE}"; fi
-  - if [ "false" = "${TRAVIS_PULL_REQUEST}" -a "master" = "${TRAVIS_BRANCH}" ]; then
+  - if [ "cron" != "${TRAVIS_EVENT_TYPE}" -a "false" = "${TRAVIS_PULL_REQUEST}" -a "master" = "${TRAVIS_BRANCH}" ]; then
       curl -XPOST "https://nur-update.herokuapp.com/update?repo=${NUR_REPO}"; fi
 
 after_failure:
