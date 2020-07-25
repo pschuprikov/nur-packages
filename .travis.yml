@@ -30,6 +30,7 @@ install:
   - travis_retry nix-channel --update
   - nix-channel --list
   - nix-instantiate --eval -E 'with import <nixpkgs> {}; lib.version or lib.nixpkgsVersion'
+  - echo $NIX_PATH
 
 script:
   - timeout 40m nix-build ci.nix -A buildOutputs
