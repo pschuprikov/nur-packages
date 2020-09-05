@@ -17,18 +17,6 @@ jobs:
   - env: NIX_CHANNEL=https://nixos.org/channels/nixos-20.03
     os: linux
 
-install:
-  - nix --version
-  # for cachix we need travis to be a trusted nix user
-  - echo "trusted-users = $USER" | sudo tee -a /etc/nix/nix.conf
-  - sudo systemctl restart nix-daemon
-  - if [ -n "${CACHIX_CACHE}" ]; then travis_retry nix-channel --update; fi
-  - if [ -n "${CACHIX_CACHE}" ]; then nix-env -iA cachix -f https://cachix.org/api/v1/install; fi
-  - if [ -n "${CACHIX_CACHE}" ]; then cachix use "${CACHIX_CACHE}"; fi
-  - export NIX_PATH="${HOME}/.nix-defexpr/channels:${NIX_PATH}"
-  - nix-channel --add "${NIX_CHANNEL}" nixpkgs
-  - travis_retry nix-channel --update
-
 script:
   - timeout 40m nix-build ci.nix -A buildOutputs
   - nix eval -f default.nix 'lib'
