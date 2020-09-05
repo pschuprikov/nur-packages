@@ -12,9 +12,9 @@ env:
 
 jobs:
   include:
-  - env: NIX_CHANNEL=https://nixos.org/channels/nixos-unstable
+  - env: NIX_PATH=https://nixos.org/channels/nixos-unstable
     os: linux
-  - env: NIX_CHANNEL=https://nixos.org/channels/nixos-20.03
+  - env: NIX_PATH=https://nixos.org/channels/nixos-20.03
     os: linux
 
 script:
