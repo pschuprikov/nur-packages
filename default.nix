@@ -24,6 +24,10 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   cd-hit = self.callPackage ./pkgs/bioinf/cd-hit { };
   compdb = pkgs.python3Packages.callPackage ./pkgs/compdb { };
 
+  intel-sgx = self.callPackage ./pkgs/intel-sgx { };
+
+  intel-sgx-ssl = self.callPackage ./pkgs/intel-sgx-ssl { };
+
   mariadbpp = self.callPackage ./pkgs/mariadbpp { };
 
   splitstree = self.callPackage ./pkgs/bioinf/splitstree {
