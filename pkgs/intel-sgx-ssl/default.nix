@@ -1,4 +1,5 @@
-{ stdenv, lib, fetchFromGitHub, coreutils, gnugrep, gnused, openssl, perl, intel-sgx, which, enableMitigation ? false }:
+{ stdenv, lib, fetchFromGitHub, coreutils, gnugrep, gnused, openssl, perl
+, intel-sgx, which, glibc, enableMitigation ? false }:
 stdenv.mkDerivation {
   name = "intel-sgx-ssl";
 
@@ -29,7 +30,7 @@ stdenv.mkDerivation {
   buildFlags =
     [ ("sgxssl" + lib.optionalString (!enableMitigation) "_no_mitigation") ];
 
-  buildInputs = [ which perl ];
+  buildInputs = [ glibc which perl ];
 
   installFlags = [ "DESTDIR=$(out)" ];
 }
