@@ -1,4 +1,5 @@
-{ version, hasMitigation, sha256, optlibsSha256, binutilsSha256 ? null, patchOpenMP ? false }:
+{ version, hasMitigation, sha256, optlibsSha256, binutilsSha256 ? null
+, patchOpenMP ? false }:
 { stdenv, lib, overrideCC, wrapCCWith, fetchFromGitHub, fetchurl
 , autoPatchelfHook, buildEnv, binutils-unwrapped, wrapBintoolsWith, file
 , coreutils, ocaml, autoconf, automake, which, python, libtool, openssl
@@ -91,8 +92,8 @@ in sgxStdenv.mkDerivation {
   '';
 
   buildFlags = [
-    ("sdk_install_pkg"
-      + lib.optionalString (hasMitigation && !enableMitigation) "_no_mitigation")
+    ("sdk_install_pkg" + lib.optionalString (hasMitigation && !enableMitigation)
+      "_no_mitigation")
   ];
 
   buildInputs = [
