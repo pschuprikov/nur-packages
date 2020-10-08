@@ -24,7 +24,10 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   cd-hit = self.callPackage ./pkgs/bioinf/cd-hit { };
   compdb = pkgs.python3Packages.callPackage ./pkgs/compdb { };
 
-  intel-sgx = self.callPackage ./pkgs/intel-sgx { };
+  intel-sgx_2_7_1 = self.callPackage ./pkgs/intel-sgx/2_7_1.nix { };
+  intel-sgx_2_11 = self.callPackage ./pkgs/intel-sgx/2_11.nix { };
+
+  intel-sgx = intel-sgx_2_7_1;
 
   intel-sgx-ssl = self.callPackage ./pkgs/intel-sgx-ssl { };
 
