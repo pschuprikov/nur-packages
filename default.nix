@@ -27,9 +27,24 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   intel-sgx_2_7_1 = self.callPackage ./pkgs/intel-sgx/2_7_1.nix { };
   intel-sgx_2_11 = self.callPackage ./pkgs/intel-sgx/2_11.nix { };
 
-  intel-sgx = intel-sgx_2_7_1;
+  intel-sgx = intel-sgx_2_11;
 
-  intel-sgx-ssl = self.callPackage ./pkgs/intel-sgx-ssl { };
+  intel-sgx-ssl_2_11 = self.callPackage ./pkgs/intel-sgx-ssl/2_11.nix { };
+
+  intel-sgx-ssl_2_5 = 
+    let 
+      openssl_1_1_1_d = pkgs.openssl.overrideAttrs (attrs: {
+        src = pkgs.fetchurl {
+          url = "https://www.openssl.org/source/openssl-1.1.1d.tar.gz";
+          sha256 = "1whinyw402z3b9xlb3qaxv4b9sk4w1bgh9k0y8df1z4x3yy92fhy";
+        };
+      });
+    in self.callPackage ./pkgs/intel-sgx-ssl/2_5.nix { 
+      openssl = openssl_1_1_1_d; 
+      intel-sgx = intel-sgx_2_7_1;
+    };
+
+  intel-sgx-ssl = intel-sgx-ssl_2_11;
 
   mariadbpp = self.callPackage ./pkgs/mariadbpp { };
 

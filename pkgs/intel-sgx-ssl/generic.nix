@@ -1,5 +1,10 @@
+{ version, sha256, hasMitigation, targetName ? null }:
 { stdenv, lib, fetchFromGitHub, coreutils, gnugrep, gnused, openssl, perl
 , intel-sgx, which, glibc, enableMitigation ? false }:
+
+assert !hasMitigation -> !enableMitigation;
+assert hasMitigation -> targetName != null;
+
 stdenv.mkDerivation {
   name = "intel-sgx-ssl";
 
@@ -7,8 +12,8 @@ stdenv.mkDerivation {
     name = "source";
     owner = "intel";
     repo = "intel-sgx-ssl";
-    rev = "8c0866516ad6eb5f0bd47d15eced0d8c35723f2a";
-    sha256 = "0fihw5xld67qilnywlr7jm4nw6k2w10qx5jg352kb1skpbq9i9s8";
+    rev = version;
+    inherit sha256;
   };
 
   patchPhase = ''
@@ -18,6 +23,8 @@ stdenv.mkDerivation {
       --replace "/bin/ls" "${coreutils}/bin/ls" \
       --replace "/bin/grep" "${gnugrep}/bin/grep" \
       --replace "/bin/sed" "${gnused}/bin/sed"
+    substituteInPlace Linux/sgx/libsgx_tsgxssl/tdefines.h \
+      --replace "/usr/include/bits/confname.h" "bits/confname.h"
     cp ${openssl.src}  openssl_source/$(stripHash ${openssl.src})
   '';
 
@@ -27,10 +34,16 @@ stdenv.mkDerivation {
     source ${intel-sgx}/sgxsdk/environment
   '';
 
-  buildFlags =
-    [ ("sgxssl" + lib.optionalString (!enableMitigation) "_no_mitigation") ];
+  buildFlags = if targetName != null then
+    [
+      (targetName + lib.optionalString (!enableMitigation && hasMitigation)
+        "_no_mitigation")
+    ]
+  else
+    null;
 
   buildInputs = [ glibc which perl ];
 
   installFlags = [ "DESTDIR=$(out)" ];
 }
+
