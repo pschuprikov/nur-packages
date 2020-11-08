@@ -6,7 +6,7 @@ assert !hasMitigation -> !enableMitigation;
 assert hasMitigation -> targetName != null;
 
 stdenv.mkDerivation {
-  name = "intel-sgx-ssl";
+  name = "intel-sgx-ssl-${version}";
 
   src = fetchFromGitHub {
     name = "source";
