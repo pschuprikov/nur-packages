@@ -1,6 +1,6 @@
 { version, sha256, hasMitigation, targetName ? null }:
 { stdenv, lib, fetchFromGitHub, coreutils, gnugrep, gnused, openssl, perl
-, intel-sgx, which, glibc, enableMitigation ? false }:
+, intel-sgx-sdk, which, glibc, enableMitigation ? false }:
 
 assert !hasMitigation -> !enableMitigation;
 assert hasMitigation -> targetName != null;
@@ -31,7 +31,7 @@ stdenv.mkDerivation {
   preBuild = ''
     cd Linux
     export NIX_PATH=1
-    source ${intel-sgx}/sgxsdk/environment
+    export SGX_SDK=${intel-sgx-sdk}/opt/intel/sgxsdk
   '';
 
   buildFlags = if targetName != null then

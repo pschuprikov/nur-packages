@@ -1,9 +1,10 @@
-{ version, hasMitigation, sha256, optlibsSha256, binutilsSha256 ? null
-, patchOpenMP ? false }:
+{ version, hasMitigation, sha256, optlibsSha256, aeSha256, 
+binutilsSha256 ? null, patchOpenMP ? false }:
 { stdenv, lib, overrideCC, wrapCCWith, fetchFromGitHub, fetchurl
 , autoPatchelfHook, buildEnv, binutils-unwrapped, wrapBintoolsWith, file
 , coreutils, ocaml, autoconf, automake, which, python, libtool, openssl
-, llvmPackages_8, ocamlPackages, perl, cmake, bash, enableMitigation ? false }:
+, llvmPackages_8, ocamlPackages, perl, cmake, bash, protobuf, curl, fakeroot
+, enableMitigation ? false }:
 
 assert !hasMitigation -> !enableMitigation;
 
@@ -57,57 +58,98 @@ let
     sha256 = "14mk253sdggvqi90fhkywp14a0w4wx4ll22dvddqvdbgknmf9jfc";
   };
 
-  sgxStdenv = if useIntelBinUtils then intelStdenv else stdenv;
-
-in sgxStdenv.mkDerivation {
-  name = "linux-sgx";
-
-  src = fetchFromGitHub {
-    owner = "intel";
-    repo = "linux-sgx";
-    rev = "sgx_${version}";
-    sha256 = sha256;
-    fetchSubmodules = true;
+  intel-ae-prebuilt = fetchurl {
+    url = "${server-url-path}/prebuilt_ae_${version}.tar.gz";
+    sha256 = aeSha256;
   };
 
-  dontUseCmakeConfigure = true;
+  sgxStdenv = if useIntelBinUtils then intelStdenv else stdenv;
 
-  patchPhase = ''
-    tar -xzvf ${intel-optlibs-prebuilt}
-    tar -xzvf ${intel-dcap-prebuilt}
-  '' + lib.optionalString patchOpenMP ''
-    pushd external/openmp/openmp_code
-    patch -p1 < ../*.patch
-    popd
-  '' + ''
+  createDerivation = component: sdk:
+    let arch = if stdenv.isx86_64 then "x64" else if stdenv.isx86_32 then "x32" else null;
+     in (sgxStdenv.mkDerivation {
+      name = "linux-sgx-${component}-${version}";
 
-    substituteInPlace buildenv.mk \
-      --replace /bin/cp ${coreutils}/bin/cp
+      src = fetchFromGitHub {
+        owner = "intel";
+        repo = "linux-sgx";
+        rev = "sgx_${version}";
+        sha256 = sha256;
+        fetchSubmodules = true;
+      };
 
-    patchShebangs linux/installer
-  '';
+      dontUseCmakeConfigure = true;
+      patchPhase = ''
+        tar -xzvf ${intel-optlibs-prebuilt}
+        tar -xzvf ${intel-dcap-prebuilt}
+      '' + lib.optionalString patchOpenMP ''
+        pushd external/openmp/openmp_code
+        patch -p1 < ../*.patch
+        popd
+      '' + ''
 
-  installPhase = ''
-    ./linux/installer/bin/sgx_linux_x64_sdk_* -prefix $out;
-  '';
+        substituteInPlace buildenv.mk \
+          --replace /bin/cp ${coreutils}/bin/cp
 
-  buildFlags = [
-    ("sdk_install_pkg" + lib.optionalString (hasMitigation && !enableMitigation)
-      "_no_mitigation")
-  ];
+        patchShebangs linux/installer
+      '';
 
-  buildInputs = [
-    cmake
-    file
-    ocaml
-    openssl
-    libtool
-    which
-    python
-    ocamlPackages.ocamlbuild
-    autoconf
-    automake
-    perl
-  ];
+      preInstall = ''
+        ./linux/installer/common/${component}/createTarball.sh
+        export DESTDIR=$out
+      '';
+
+      installFlags = ["-C" "./linux/installer/common/${component}/output" ];
+
+      buildFlags = [
+        ("${component}"
+          + lib.optionalString (component == "sdk" && hasMitigation && !enableMitigation)
+          "_no_mitigation")
+      ];
+
+
+      enableParallelBuilding = true;
+
+      buildInputs = [
+        cmake
+        file
+        ocaml
+        openssl
+        libtool
+        which
+        python
+        ocamlPackages.ocamlbuild
+        autoconf
+        automake
+        perl
+      ];
+    }).overrideAttrs (attrs: lib.optionalAttrs (component == "psw") {
+      patchPhase = attrs.patchPhase + ''
+        tar -xzvf ${intel-ae-prebuilt}
+        substituteInPlace psw/ae/aesm_service/source/CMakeLists.txt \
+          --replace /usr/bin/getconf getconf
+        substituteInPlace linux/installer/common/psw/createTarball.sh \
+          --replace 'ARCH=$(get_arch)' "ARCH=${arch}"
+        substituteInPlace external/dcap_source/QuoteGeneration/buildenv.mk \
+          --replace /bin/cp ${coreutils}/bin/cp
+        substituteInPlace psw/ae/pve/helper.cpp \
+          --replace '#include "helper.h"' "#pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored \"-Wshadow\"
+        #include \"helper.h\"
+        #pragma GCC diagnostic pop"
+        substituteInPlace psw/ae/pve/Makefile \
+          --replace EPID_LIBDIR EPID_SDK_DIR
+      '';
+
+      preBuild = ''
+        export SGX_SDK=${sdk}/opt/intel/sgxsdk
+      '';
+
+      buildInputs = attrs.buildInputs ++ [
+        protobuf curl fakeroot
+      ];
+    });
+in rec {
+  sdk = createDerivation "sdk" null;
+  psw = createDerivation "psw" sdk;
 }
-
