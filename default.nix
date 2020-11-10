@@ -74,6 +74,17 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   prank = self.callPackage ./pkgs/bioinf/prank { };
   FastTree = self.callPackage ./pkgs/bioinf/fasttree { };
 
+  llvmPackagesWithGcc10 =
+    let 
+      gccForLibs = pkgs.gcc10.cc;
+      wrapCCWith = args: pkgs.wrapCCWith (args // { inherit gccForLibs; } );
+      llvmPackages = pkgs.llvmPackages_10.override { 
+        buildLlvmTools = llvmPackages.tools;
+        targetLlvmLibraries = llvmPackages.libraries;
+        inherit wrapCCWith gccForLibs;
+      };
+     in llvmPackages;
+
   perlPackages = self.callPackage ./pkgs/perl-packages.nix { 
     inherit (pkgs) perlPackages; 
   } // pkgs.perlPackages // {
