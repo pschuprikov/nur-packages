@@ -73,6 +73,7 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   mcl = self.callPackage ./pkgs/bioinf/mcl { };
   prank = self.callPackage ./pkgs/bioinf/prank { };
   FastTree = self.callPackage ./pkgs/bioinf/fasttree { };
+  markdown2ctags = pkgs.python3Packages.callPackage ./pkgs/markdown2ctags { };
 
   llvmPackagesWithGcc10 =
     let 
