@@ -95,5 +95,8 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   inherit (perlPackages) BioPerl BioRoary BioSearchIOhmmer;
 
   autofirma = self.callPackage ./pkgs/autofirma { };
+  spot = self.callPackage ./pkgs/spot/default.nix { };
+  tchecker = self.callPackage ./pkgs/tchecker { };
+  tcltl = self.callPackage ./pkgs/tcltl { };
 }); 
 in scope.packages scope
