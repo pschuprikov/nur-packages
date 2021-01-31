@@ -1,17 +1,15 @@
-{ version, hasMitigation, sha256, optlibsSha256, aeSha256, 
-binutilsSha256 ? null, patchOpenMP ? false }:
+{ version, hasMitigation, sha256, optlibsSha256, aeSha256
+, binutilsSha256 ? null, patchOpenMP ? false }:
 { stdenv, lib, overrideCC, wrapCCWith, fetchFromGitHub, fetchurl
 , autoPatchelfHook, buildEnv, binutils-unwrapped, wrapBintoolsWith, file
 , coreutils, ocaml, autoconf, automake, which, python, libtool, openssl
 , llvmPackages_8, ocamlPackages, perl, cmake, bash, protobuf, curl, fakeroot
-, enableMitigation ? false }:
+, intelSGXDCAPPrebuilt, enableMitigation ? false }:
 
 assert !hasMitigation -> !enableMitigation;
 
 let
   useIntelBinUtils = binutilsSha256 != null;
-
-  dcap_version = "1.8";
 
   intel-sgx-path = "https://download.01.org/intel-sgx/";
 
@@ -52,12 +50,6 @@ let
     sha256 = optlibsSha256;
   };
 
-  intel-dcap-prebuilt = fetchurl {
-    url =
-      "${intel-sgx-path}/sgx-dcap/${dcap_version}/linux/prebuilt_dcap_${dcap_version}.tar.gz";
-    sha256 = "14mk253sdggvqi90fhkywp14a0w4wx4ll22dvddqvdbgknmf9jfc";
-  };
-
   intel-ae-prebuilt = fetchurl {
     url = "${server-url-path}/prebuilt_ae_${version}.tar.gz";
     sha256 = aeSha256;
@@ -81,7 +73,7 @@ let
       dontUseCmakeConfigure = true;
       patchPhase = ''
         tar -xzvf ${intel-optlibs-prebuilt}
-        tar -xzvf ${intel-dcap-prebuilt}
+        tar -xzvf ${intelSGXDCAPPrebuilt}
       '' + lib.optionalString patchOpenMP ''
         pushd external/openmp/openmp_code
         patch -p1 < ../*.patch
@@ -152,4 +144,5 @@ let
 in rec {
   sdk = createDerivation "sdk" null;
   psw = createDerivation "psw" sdk;
+  stdenv = intelStdenv;
 }

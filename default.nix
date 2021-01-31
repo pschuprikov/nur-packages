@@ -24,7 +24,19 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   cd-hit = self.callPackage ./pkgs/bioinf/cd-hit { };
   compdb = pkgs.python3Packages.callPackage ./pkgs/compdb { };
 
-  intelSGXPackages_2_7_1 = self.callPackage ./pkgs/intel-sgx/2_7_1.nix { protobuf = pkgs.protobuf3_10; };
+  hadoop = (self.callPackage ./pkgs/hadoop { 
+    jre = pkgs.jre8;
+    maven = pkgs.maven.override { jdk = pkgs.jdk8; };
+  }).hadoop_3_1;
+
+  intelSGXDCAPPrebuilt1_4 = self.callPackage ./pkgs/intel-sgx-dcap-prebuilt/1_4.nix {};
+
+  intelSGXDCAPPrebuilt1_8 = self.callPackage ./pkgs/intel-sgx-dcap-prebuilt/1_8.nix {};
+
+  intelSGXPackages_2_7_1 = self.callPackage ./pkgs/intel-sgx/2_7_1.nix { 
+    protobuf = pkgs.protobuf3_10; 
+    intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
+  };
   intelSGXPackages_2_11 = self.callPackage ./pkgs/intel-sgx/2_11.nix { };
 
   intelSGXPackages = intelSGXPackages_2_11;
@@ -75,6 +87,16 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   FastTree = self.callPackage ./pkgs/bioinf/fasttree { };
   markdown2ctags = pkgs.python3Packages.callPackage ./pkgs/markdown2ctags { };
 
+  openenclave = self.callPackage ./pkgs/openenclave { 
+    intel-sgx-sdk = intel-sgx-sdk_2_7_1;
+    intel-sgx-psw = intel-sgx-psw_2_7_1;
+  };
+
+  opaque = self.callPackage ./pkgs/opaque { 
+    intel-sgx-sdk = intel-sgx-sdk_2_7_1;
+    intel-sgx-psw = intel-sgx-psw_2_7_1;
+  };
+
   llvmPackagesWithGcc10 =
     let 
       gccForLibs = pkgs.gcc10.cc;
@@ -98,5 +120,7 @@ let scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
   spot = self.callPackage ./pkgs/spot/default.nix { };
   tchecker = self.callPackage ./pkgs/tchecker { };
   tcltl = self.callPackage ./pkgs/tcltl { };
+
+  ncmpcpp = self.callPackage ./pkgs/ncmpcpp { };
 }); 
 in scope.packages scope
