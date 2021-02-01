@@ -57,7 +57,7 @@ let
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "sha256-36VbuVCYYiCdY8O5v/OhdWhgVBUvL9ubX7/g1sl252U=";
+    outputHash = "sha256-MaZ420uAmAA4Ejs8ut3D1KSCZOVQ/MceQccUWcP8Xaw=";
   };
 
   intel-cert = fetchurl {
