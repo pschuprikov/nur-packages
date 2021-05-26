@@ -48,6 +48,8 @@ let
       intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
     };
 
+    ise = self.callPackage ./pkgs/ise { };
+
     intelSGXPackages_2_11 = self.callPackage ./pkgs/intel-sgx/2_11.nix {
       intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
     };
