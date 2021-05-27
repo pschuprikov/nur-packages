@@ -1,6 +1,7 @@
 { lib, buildFHSUserEnv, fetchurl, bash, runCommand }:
 let
   src = fetchurl {
+    url = "file:///dev/null";
     sha256 = "1amd6f6wp4l9zzpsz6y351v4giamdicwg5lswp5azkxvq53b1q6f";
   };
 
@@ -95,6 +96,10 @@ in buildFHSUserEnv {
       gcc
     ];
   runScript = "${ise-bin}/opt/Xilinx/14.7/ISE_DS/ISE/bin/lin64/ise";
+
+  passthru = {
+    inherit ise-bin;
+  };
 
   meta = with lib; {
     license = licenses.unfree;

@@ -3,7 +3,7 @@
   inputs.nixpkgs.url = github:NixOS/nixpkgs/nixos-20.09;
 
   outputs = { self, nixpkgs }: 
-    let pkgs = import nixpkgs { system = "x86_64-linux"; };
+    let pkgs = import nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; };
         lib = pkgs.lib;
         nur = import self { pkgs = pkgs; };
     in {

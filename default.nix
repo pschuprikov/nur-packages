@@ -111,11 +111,15 @@ let
     FastTree = self.callPackage ./pkgs/bioinf/fasttree { };
     markdown2ctags = pkgs.python3Packages.callPackage ./pkgs/markdown2ctags { };
 
-    openenclave = self.callPackage ./pkgs/openenclave {
-      stdenv = pkgs.gcc9Stdenv;
-      intel-sgx-sdk = intel-sgx-sdk_2_7_1;
-      intel-sgx-psw = intel-sgx-psw_2_7_1;
-    };
+    openenclave = 
+      let ocamlPackages = pkgs.ocamlPackages_latest;
+       in self.callPackage ./pkgs/openenclave {
+        inherit (ocamlPackages) ocaml;
+        dune = ocamlPackages.dune or ocamlPackages.dune_2;
+        stdenv = pkgs.gcc9Stdenv;
+        intel-sgx-sdk = intel-sgx-sdk_2_7_1;
+        intel-sgx-psw = intel-sgx-psw_2_7_1;
+      };
 
     #opaque = self.callPackage ./pkgs/opaque { 
     #  intel-sgx-sdk = intel-sgx-sdk_2_7_1;
