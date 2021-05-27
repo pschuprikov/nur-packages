@@ -24,7 +24,7 @@ buildPythonApplication rec {
   propagatedBuildInputs = [ tkinter ];
 
   meta = {
-    plaftorms = lib.plaftorms.linux;
+    platforms = lib.platforms.linux;
     broken = isNull blast;
   };
 }
