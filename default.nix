@@ -32,6 +32,8 @@ let
 
     blast = pkgs.blast.override { stdenv = pkgs.gcc9Stdenv; };
 
+    anyconnect = self.callPackage ./pkgs/anyconnect { };
+
     #hadoop = (self.callPackage ./pkgs/hadoop { 
     #  jre = pkgs.jre8;
     #  maven = pkgs.maven.override { jdk = pkgs.jdk8; };
