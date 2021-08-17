@@ -146,5 +146,7 @@ let
     };
 
     ncmpcpp = self.callPackage ./pkgs/ncmpcpp { };
+
+    canonPrinterPPD = self.callPackage ./pkgs/canon-printer-ppd { };
   });
 in scope.packages scope
