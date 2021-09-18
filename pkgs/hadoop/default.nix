@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, makeWrapper, pkgconfig, which, maven, cmake, jre, bash
+{ lib, stdenv, fetchurl, makeWrapper, pkgconfig, which, maven, cmake, jre, bash
 , coreutils, glibc, protobuf2_5, fuse, snappy, zlib, bzip2, openssl, openssl_1_0_2
 }:
 
@@ -13,7 +13,7 @@ let
           inherit sha256;
         };
 
-        postUnpack = stdenv.lib.optionalString (tomcat != null) ''
+        postUnpack = lib.optionalString (tomcat != null) ''
           install -D ${tomcat.src} $sourceRoot/hadoop-hdfs-project/hadoop-hdfs-httpfs/downloads/apache-tomcat-${tomcat.version}.tar.gz
           install -D ${tomcat.src} $sourceRoot/hadoop-common-project/hadoop-kms/downloads/apache-tomcat-${tomcat.version}.tar.gz
         '';
@@ -59,8 +59,8 @@ let
           # 'maven.repo.local' must be writable
           mvn package --offline -Dmaven.repo.local=$(cp -dpR ${fetched-maven-deps}/.m2 ./ && chmod +w -R .m2 && pwd)/.m2 ${mavenFlags}
           # remove runtime dependency on $jdk/jre/lib/amd64/server/libjvm.so
-          patchelf --set-rpath ${stdenv.lib.makeLibraryPath [glibc]} hadoop-dist/target/hadoop-${version}/lib/native/libhadoop.so.1.0.0
-          patchelf --set-rpath ${stdenv.lib.makeLibraryPath [glibc]} hadoop-dist/target/hadoop-${version}/lib/native/libhdfs.so.0.0.0
+          patchelf --set-rpath ${lib.makeLibraryPath [glibc]} hadoop-dist/target/hadoop-${version}/lib/native/libhadoop.so.1.0.0
+          patchelf --set-rpath ${lib.makeLibraryPath [glibc]} hadoop-dist/target/hadoop-${version}/lib/native/libhdfs.so.0.0.0
         '';
         installPhase = "mv hadoop-dist/target/hadoop-${version} $out";
       };
@@ -86,18 +86,18 @@ let
             if [ -f "$n" ]; then # only regular files
               mv $n $out/bin.wrapped/
               makeWrapper $out/bin.wrapped/$(basename $n) $n \
-                --prefix PATH : "${stdenv.lib.makeBinPath [ which jre bash coreutils ]}" \
-                --prefix JAVA_LIBRARY_PATH : "${stdenv.lib.makeLibraryPath [ opensslPkg snappy zlib bzip2 ]}" \
+                --prefix PATH : "${lib.makeBinPath [ which jre bash coreutils ]}" \
+                --prefix JAVA_LIBRARY_PATH : "${lib.makeLibraryPath [ opensslPkg snappy zlib bzip2 ]}" \
                 --set JAVA_HOME "${jre}" \
                 --set HADOOP_PREFIX "$out"
             fi
           done
         '';
 
-        meta = with stdenv.lib; {
+        meta = {
           homepage = "http://hadoop.apache.org/";
           description = "Framework for distributed processing of large data sets across clusters of computers";
-          license = licenses.asl20;
+          license = lib.licenses.asl20;
 
           longDescription = ''
             The Apache Hadoop software library is a framework that allows for
@@ -110,7 +110,7 @@ let
             so delivering a highly-availabile service on top of a cluster of
             computers, each of which may be prone to failures.
           '';
-          maintainers = with maintainers; [ volth ];
+          maintainers = with lib.maintainers; [ volth ];
           platforms = [ "x86_64-linux" ];
         };
       };

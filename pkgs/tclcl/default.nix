@@ -1,4 +1,4 @@
-{ stdenv, autoreconfHook, fetchurl, tk, tcl, otcl, xlibs, zlib }:
+{ lib, stdenv, autoreconfHook, fetchurl, tk, tcl, otcl, xlibs, zlib }:
 stdenv.mkDerivation rec {
   version = "1.20";
 
@@ -43,10 +43,10 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
   '';
 
-  meta = with stdenv.lib; {
+  meta = {
     description = "A Tcl/C++ interface";
     homepage = http://otcl-tclcl.sourceforge.net/tclcl/;
-    license = licenses.free;
-    platforms = platforms.linux;
+    license = lib.licenses.free;
+    platforms = lib.platforms.linux;
   };
 }

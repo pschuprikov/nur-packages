@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, autoreconfHook, xlibs, tk, tcl }:
+{ lib, stdenv, fetchurl, autoreconfHook, xlibs, tk, tcl }:
 stdenv.mkDerivation rec {
   version = "1.14";
   name = "otcl-${version}";
@@ -23,10 +23,10 @@ stdenv.mkDerivation rec {
     "--with-tk-ver=${tk.release}"
   ];
 
-  meta = with stdenv.lib; {
+  meta = {
     description = "An extension to Tcl/Tk for object-oriented programming";
     homepage = http://otcl-tclcl.sourceforge.net/otcl/;
-    license = licenses.free;
-    platforms = platforms.linux;
+    license = lib.licenses.free;
+    platforms = lib.platforms.linux;
   };
 }
