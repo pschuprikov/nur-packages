@@ -14,6 +14,11 @@ let
     otcl = self.callPackage ./pkgs/otcl { };
     tclcl = self.callPackage ./pkgs/tclcl { };
     ns-2 = self.callPackage ./pkgs/ns2 { };
+
+    qt5 = pkgs.lib.makeScope pkgs.qt5.newScope (self: rec {
+      omnetpp = self.callPackage ./pkgs/omnetpp { };
+      omnetpp-inet = self.callPackage ./pkgs/omnetpp-inet { };
+    });
     buildArb = self.callPackage ./pkgs/bioinf/arb/buildArb.nix { };
     arbcommon = self.callPackage ./pkgs/bioinf/arb/common { };
     arbcore = self.callPackage ./pkgs/bioinf/arb/core { };
