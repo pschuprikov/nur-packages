@@ -4,7 +4,7 @@
 
 let
   common = { 
-    version, sha256, maven, tomcat, archive ? false, patches ? [], patchHadoopEnv ? true
+    version, sha256, maven, projectInfo, tomcat, archive ? false, patches ? [], patchHadoopEnv ? true
     }:
     let
       # compile the hadoop tarball from sources, it requires some patches
@@ -29,7 +29,7 @@ let
         '';
 
         # perform fake build to make a fixed-output derivation of dependencies downloaded from maven central (~100Mb in ~3000 files)
-        fetched-maven-deps = (buildMaven ./project-info.json).repo;
+        fetched-maven-deps = (buildMaven projectInfo).repo;
 
         nativeBuildInputs = [ maven cmake pkg-config ];
         buildInputs = [ jdiff fuse snappy zlib bzip2 openssl protobuf2_5 libtirpc ];
@@ -58,7 +58,7 @@ let
         mavenFlags = "-Drequire.snappy -Drequire.bzip2 -DskipTests -Pdist,native -Dmaven.javadoc.skip -e ";
         buildPhase = ''
           # 'maven.repo.local' must be writable
-          mvn package --offline -Dmaven.repo.local=$(mkdir ./.m2 && cp -dpR ${fetched-maven-deps}/* ./.m2/ && chmod +w -R .m2 && pwd)/.m2 ${mavenFlags}
+          mvn package --offline -Dmaven.repo.local=$(mkdir -p ./.m2 && cp -dpR ${fetched-maven-deps}/* ./.m2/ && chmod +w -R .m2 && pwd)/.m2 ${mavenFlags}
           # remove runtime dependency on $jdk/jre/lib/amd64/server/libjvm.so
           patchelf --set-rpath ${lib.makeLibraryPath [glibc]} hadoop-dist/target/hadoop-${version}/lib/native/libhadoop.so.1.0.0
           patchelf --set-rpath ${lib.makeLibraryPath [glibc]} hadoop-dist/target/hadoop-${version}/lib/native/libhdfs.so.0.0.0
@@ -132,12 +132,28 @@ let
     };
   };
 
+  tomcat_6_0_41 = rec {
+    version = "6.0.41";
+    src = fetchurl {
+      # do not use "mirror://apache/" here, tomcat-6 is legacy and has been removed from the mirrors
+      url = "https://archive.apache.org/dist/tomcat/tomcat-6/v${version}/bin/apache-tomcat-${version}.tar.gz";
+      sha256 = "sha256-LrKBK0LzVZaQVC/LnqDB9D3QsLfcoZeHZAwrd1Ww+VM=";
+    };
+  };
+
 in {
   hadoop_2_6_5 = common {
-    version = "2.7.7";
-    sha256 = "1ahv67f3lwak3kbjvnk1gncq56z6dksbajj872iqd0awdsj3p5rf";
-    tomcat = tomcat_6_0_48;
+    version = "2.6.5";
+    sha256 = "sha256-OoQ/GHPZlRpREUd37NTfWORVNA682vn35hJEENTdZfA=";
+    projectInfo = ./project-info-2_6_5.json;
+    tomcat = tomcat_6_0_41;
+    archive = true;
     inherit maven;
+    patches = [
+      ./openssl.patch
+      ./errno.patch
+      ./deps-freeze-2_6_5.patch
+    ];
   };
   hadoop_2_8 = common {
     version = "2.8.4";
@@ -162,13 +178,14 @@ in {
     sha256 = "04hhdbyd4x1hy0fpy537f8mi0864hww97zap29x7dk1smrffwabd";
     tomcat = null;
     inherit maven;
+    projectInfo = ./project-info-3_1.json;
     patches = [
       (fetchpatch {
         url = "https://patch-diff.githubusercontent.com/raw/apache/hadoop/pull/2886.patch";
         sha256 = "1fim1d8va050za5i8a6slphmx015fzvhxkc2wi4rwg7kbj31sv0r";
       })
       ./tirpc.patch
-      ./deps-freeze.patch
+      ./deps-freeze-3_1.patch
     ];
     patchHadoopEnv = false;
   };

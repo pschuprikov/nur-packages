@@ -39,10 +39,12 @@ let
 
     anyconnect = self.callPackage ./pkgs/anyconnect { };
 
-    hadoop = (self.callPackage ./pkgs/hadoop { 
+    inherit (self.callPackage ./pkgs/hadoop { 
       jre = pkgs.jre8;
       maven = pkgs.maven.override { jdk = pkgs.jdk8; };
-    }).hadoop_3_1;
+    }) hadoop_3_1 hadoop_2_6_5;
+
+    hadoop = hadoop_3_1;
 
     intelSGXDCAPPrebuilt1_4 =
       self.callPackage ./pkgs/intel-sgx-dcap-prebuilt/1_4.nix { };
