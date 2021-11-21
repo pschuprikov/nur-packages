@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, python3, perl, openscenegraph, libGL, omnetpp, mode ? "release" }:
+{ stdenv, fetchurl, python3, perl, openscenegraph, libGL, omnetpp, makeWrapper, mode ? "release" }:
 stdenv.mkDerivation rec {
   pname = "inet";
   name = "${pname}-${version}";
@@ -10,11 +10,28 @@ stdenv.mkDerivation rec {
   configureScript = "make makefiles";
   makeFlags = [ "MODE=${mode}" ];
   dontAddPrefix = true;
-  nativeBuildInputs = [ python3 perl ];
+  nativeBuildInputs = [ python3 perl makeWrapper ];
   buildInputs = [ openscenegraph libGL omnetpp ];
   enableParallelBuilding = true;
 
-  meta = {
-    broken = true;
-  };
+  installPhase = ''
+    mkdir -p $out/lib $out/share/inet
+    cp -vr bin $out/
+    cp -vr images $out/share/inet/
+    for f in $(find src -iname "*.ned"); do
+      dir=$out/share/inet/ned/$(dirname ''${f#src/})
+      mkdir -p $dir
+      cp -v $f $dir
+    done
+    install -t $out/lib out/gcc-release/src/libINET.so
+  '';
+
+  preFixup = ''
+    substituteInPlace $out/bin/inet \
+      --replace "/../src" "/../lib"
+    wrapProgram $out/bin/inet \
+      --prefix PATH ":" "${omnetpp}/bin" \
+      --prefix NEDPATH ";" "$out/share/inet/ned" \
+      --set INET_OMNETPP_OPTIONS "--image-path=$out/share/inet/images"
+  '';
 }
