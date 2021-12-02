@@ -1,4 +1,10 @@
-{ pkgs ? import <nixpkgs> { } }:
+let 
+  mvn2nix = import (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz") {};
+
+  mvn2nixoverlay = self: super: {
+  inherit (mvn2nix) buildMavenRepositoryFromLockFile;
+};
+in { pkgs ? import <nixpkgs> { overlays = [ mvn2nixoverlay ]; } }:
 let
   autoreconfHook269 = if pkgs ? autoreconfHook269 then
     pkgs.autoreconfHook269
@@ -6,6 +12,7 @@ let
     pkgs.autoreconfHook;
 
   scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
+
     # The `lib`, `modules`, and `overlay` names are special
     lib = pkgs.lib // import ./lib { inherit pkgs; }; # functions
     modules = import ./modules; # NixOS modules

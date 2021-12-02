@@ -1,5 +1,5 @@
 { lib, stdenv, fetchurl, makeWrapper, pkg-config, which, maven, cmake, jre, jdk8, bash
-, coreutils, glibc, protobuf2_5, fuse, snappy, zlib, bzip2, openssl, openssl_1_0_2, fetchpatch, libtirpc, javaPackages, buildMaven
+, coreutils, glibc, protobuf2_5, fuse, snappy, zlib, bzip2, openssl, openssl_1_0_2, fetchpatch, libtirpc, javaPackages, buildMaven, buildMavenRepositoryFromLockFile
 }:
 
 let
@@ -8,11 +8,8 @@ let
     }:
     let
       # compile the hadoop tarball from sources, it requires some patches
-      mvn2nix = import
-        (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz")
-        { };
       mavenRepository =
-       mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
+       buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
       jdiff = javaPackages.fetchMaven {
         groupId = "jdiff";
         artifactId = "jdiff";

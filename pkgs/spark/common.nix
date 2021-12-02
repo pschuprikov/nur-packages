@@ -1,6 +1,6 @@
-{ version, sha256, depsSha256, defaultScalaVersion, archive ? false }:
+{ version, sha256, depsSha256, defaultScalaVersion, archive ? false}:
 { lib, stdenv, runCommand, fetchzip, makeWrapper, jdk, pythonPackages, coreutils
-, inetutils, hadoop, procps, maven, RSupport ? true, R, scalaVersion ? "2.12.10" }:
+, inetutils, hadoop, procps, maven, RSupport ? true, R, buildMavenRepositoryFromLockFile, scalaVersion ? "2.12.10" }:
 
 with lib;
 
@@ -26,11 +26,7 @@ let
   mavenFlags =
     "-Dmaven.test.skip -DskipTests -Dhadoop.version=${hadoop.version} -Pyarn -Pscala-${lib.versions.majorMinor scalaVersion} -Phadoop-provided";
 
-  mvn2nix = import
-    (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz")
-    { };
-
-  deps = mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
+  deps = buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
 
   dist-bin = stdenv.mkDerivation {
     pname = "${pname}-bin";
