@@ -8,6 +8,11 @@ let
     }:
     let
       # compile the hadoop tarball from sources, it requires some patches
+      mvn2nix = import
+        (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz")
+        { };
+      mavenRepository =
+       mvn2nix.buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
       jdiff = javaPackages.fetchMaven {
         groupId = "jdiff";
         artifactId = "jdiff";
@@ -29,7 +34,7 @@ let
         '';
 
         # perform fake build to make a fixed-output derivation of dependencies downloaded from maven central (~100Mb in ~3000 files)
-        fetched-maven-deps = (buildMaven projectInfo).repo;
+        fetched-maven-deps = mavenRepository;
 
         nativeBuildInputs = [ maven cmake pkg-config ];
         buildInputs = [ jdiff fuse snappy zlib bzip2 openssl protobuf2_5 libtirpc ];
