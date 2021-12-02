@@ -46,6 +46,12 @@ let
 
     hadoop = hadoop_3_1;
 
+    spark_2_4_4 = self.callPackage ./pkgs/spark/2_4_4.nix {
+      jdk = pkgs.jdk8;
+      maven = pkgs.maven.override { jdk = pkgs.jdk8; };
+      hadoop = self.hadoop_2_6_5;
+    };
+
     intelSGXDCAPPrebuilt1_4 =
       self.callPackage ./pkgs/intel-sgx-dcap-prebuilt/1_4.nix { };
 
