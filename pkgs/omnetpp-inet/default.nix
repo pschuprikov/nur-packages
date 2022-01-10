@@ -24,6 +24,13 @@ stdenv.mkDerivation rec {
       cp -v $f $dir
     done
     install -t $out/lib out/gcc-release/src/libINET.so
+
+    mkdir -p $out/include
+    for f in $(find src -iname "*.h"); do
+      dir=$out/include/$(dirname ''${f#src/})
+      mkdir -p $dir
+      cp -v $f $dir
+    done
   '';
 
   preFixup = ''

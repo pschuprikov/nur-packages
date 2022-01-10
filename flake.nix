@@ -22,6 +22,7 @@
         nur // {
           intel-sgx-sdk_2_7_1-debug = intelSGXPackages_2_7_1.sdk;
           intel-sgx-psw_2_7_1-debug = intelSGXPackages_2_7_1.psw;
+          inherit (nur.qt5) omnetpp omnetpp-inet; 
         };
       inherit (nur) overlays;
     };
