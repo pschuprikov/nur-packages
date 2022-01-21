@@ -8,8 +8,6 @@ let
     pkgs.autoreconfHook;
 
   scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
-    inherit (mvn2nix) buildMavenRepositoryFromLockFile;
-
     # The `lib`, `modules`, and `overlay` names are special
     lib = pkgs.lib // import ./lib { inherit pkgs; }; # functions
     modules = import ./modules; # NixOS modules
@@ -22,7 +20,7 @@ let
     qt5 = pkgs.lib.makeScope pkgs.qt5.newScope (self: rec {
       inherit (self.callPackage ./pkgs/omnetpp { }) omnetpp_5_6_2 omnetpp_6_0;
       omnetpp = omnetpp_5_6_2;
-      inherit (self.callPackage ./pkgs/omnetpp { }) omnetpp-inet_4_2_5;
+      inherit (self.callPackage ./pkgs/omnetpp-inet { }) omnetpp-inet_4_2_5;
       omnetpp-inet = omnetpp-inet_4_2_5;
     });
     buildArb = self.callPackage ./pkgs/bioinf/arb/buildArb.nix { };
@@ -167,5 +165,5 @@ let
     ncmpcpp = self.callPackage ./pkgs/ncmpcpp { };
 
     canonPrinterPPD = self.callPackage ./pkgs/canon-printer-ppd { };
-  });
+  } // pkgs.lib.optionalAttrs (!(pkgs ? buildMavenRepositoryFromLockFile)) mvn2nix);
 in scope.packages scope

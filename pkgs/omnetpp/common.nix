@@ -1,4 +1,4 @@
-args@{ version, sha256, extraPreConfigure }:
+args@{ version, sha256, extraPreConfigure ? "", patches ? [] }:
 { stdenv, lib, bison, flex, qtbase, openscenegraph, openmpi, python3, fetchurl, perl
 , wrapQtAppsHook, mode ? "release", cppStandard ? null }:
 let
