@@ -1,10 +1,6 @@
 let 
   mvn2nix = import (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz") {};
-
-  mvn2nixoverlay = self: super: {
-  inherit (mvn2nix) buildMavenRepositoryFromLockFile;
-};
-in { pkgs ? import <nixpkgs> { overlays = [ mvn2nixoverlay ]; } }:
+in { pkgs ? import <nixpkgs> { } }:
 let
   autoreconfHook269 = if pkgs ? autoreconfHook269 then
     pkgs.autoreconfHook269
@@ -12,6 +8,7 @@ let
     pkgs.autoreconfHook;
 
   scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
+    inherit (mvn2nix) buildMavenRepositoryFromLockFile;
 
     # The `lib`, `modules`, and `overlay` names are special
     lib = pkgs.lib // import ./lib { inherit pkgs; }; # functions
@@ -23,8 +20,10 @@ let
     ns-2 = self.callPackage ./pkgs/ns2 { };
 
     qt5 = pkgs.lib.makeScope pkgs.qt5.newScope (self: rec {
-      omnetpp = self.callPackage ./pkgs/omnetpp { };
-      omnetpp-inet = self.callPackage ./pkgs/omnetpp-inet { };
+      inherit (self.callPackage ./pkgs/omnetpp { }) omnetpp_5_6_2 omnetpp_6_0;
+      omnetpp = omnetpp_5_6_2;
+      inherit (self.callPackage ./pkgs/omnetpp { }) omnetpp-inet_4_2_5;
+      omnetpp-inet = omnetpp-inet_4_2_5;
     });
     buildArb = self.callPackage ./pkgs/bioinf/arb/buildArb.nix { };
     arbcommon = self.callPackage ./pkgs/bioinf/arb/common { };
