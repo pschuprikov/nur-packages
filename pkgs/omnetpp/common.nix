@@ -1,4 +1,4 @@
-args@{ version, sha256, extraPreConfigure ? "", patches ? [] }:
+{ version, sha256, extraPreConfigure ? "", patches ? [] }:
 { stdenv, lib, bison, flex, qtbase, openscenegraph, openmpi, python3, fetchurl, perl
 , wrapQtAppsHook, mode ? "release", cppStandard ? null }:
 let
@@ -6,7 +6,7 @@ let
     (pkgs: with pkgs; [ posix_ipc numpy scipy pandas matplotlib ]);
 in stdenv.mkDerivation rec {
   pname = "omnetpp";
-  inherit version;
+  inherit version patches;
   name = "${pname}-${version}";
   postPatch = ''
     substituteInPlace ./configure.user \
@@ -41,4 +41,4 @@ in stdenv.mkDerivation rec {
   enableParallelBuilding = true;
   nativeBuildInputs = [ perl bison flex pythonWithDeps wrapQtAppsHook ];
   buildInputs = [ openscenegraph openmpi ];
-} // removeAttrs args [ "version" "sha256" "extraPreConfigure" ]
+}
