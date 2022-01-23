@@ -23,6 +23,7 @@ let
       inherit (self.callPackage ./pkgs/omnetpp-inet { }) omnetpp-inet_4_2_5;
       omnetpp-inet = omnetpp-inet_4_2_5;
     });
+
     buildArb = self.callPackage ./pkgs/bioinf/arb/buildArb.nix { };
     arbcommon = self.callPackage ./pkgs/bioinf/arb/common { };
     arbcore = self.callPackage ./pkgs/bioinf/arb/core { };
@@ -67,6 +68,10 @@ let
       intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
     };
 
+    intelSGXPackages_2_7_1-debug = intelSGXPackages_2_7_1.override {
+          debugMode = true;
+    };
+
     ise = self.callPackage ./pkgs/ise { };
 
     intelSGXPackages_2_11 = self.callPackage ./pkgs/intel-sgx/2_11.nix {
@@ -80,6 +85,9 @@ let
 
     intel-sgx-sdk_2_7_1 = intelSGXPackages_2_7_1.sdk;
     intel-sgx-psw_2_7_1 = intelSGXPackages_2_7_1.psw;
+
+    intel-sgx-sdk_2_7_1-debug = intelSGXPackages_2_7_1-debug.sdk;
+    intel-sgx-psw_2_7_1-debug = intelSGXPackages_2_7_1-debug.psw;
 
     intel-sgx-ssl_2_11 = let
       openssl_1_1_1_g = pkgs.openssl.overrideAttrs (attrs: {
