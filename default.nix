@@ -172,6 +172,8 @@ let
 
     ncmpcpp = self.callPackage ./pkgs/ncmpcpp { };
 
+    scalapbc = self.callPackage ./pkgs/scalapbc { };
+
     canonPrinterPPD = self.callPackage ./pkgs/canon-printer-ppd { };
   } // pkgs.lib.optionalAttrs (!(pkgs ? buildMavenRepositoryFromLockFile)) mvn2nix);
 in scope.packages scope
