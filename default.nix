@@ -2,14 +2,15 @@ let
   mvn2nix = import (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz") {};
 in { pkgs ? import <nixpkgs> { } }:
 let
+  lib = pkgs.lib;
   autoreconfHook269 = if pkgs ? autoreconfHook269 then
     pkgs.autoreconfHook269
   else
     pkgs.autoreconfHook;
 
-  scope = pkgs.lib.makeScope pkgs.newScope (self: rec {
+  scope = lib.makeScope pkgs.newScope (self: rec {
     # The `lib`, `modules`, and `overlay` names are special
-    lib = pkgs.lib // import ./lib { inherit pkgs; }; # functions
+    lib = lib // import ./lib { inherit pkgs; }; # functions
     modules = import ./modules; # NixOS modules
     overlays = import ./overlays; # nixpkgs overlays
 
@@ -17,7 +18,7 @@ let
     tclcl = self.callPackage ./pkgs/tclcl { };
     ns-2 = self.callPackage ./pkgs/ns2 { };
 
-    qt5 = pkgs.lib.makeScope pkgs.qt5.newScope (self: rec {
+    qt5 = lib.makeScope pkgs.qt5.newScope (self: rec {
       inherit (self.callPackage ./pkgs/omnetpp { }) omnetpp_5_6_2 omnetpp_6_0;
       omnetpp = omnetpp_5_6_2;
       inherit (self.callPackage ./pkgs/omnetpp-inet { }) omnetpp-inet_4_2_5;
@@ -43,6 +44,7 @@ let
     blast = pkgs.blast.override { stdenv = pkgs.gcc9Stdenv; };
 
     anyconnect = self.callPackage ./pkgs/anyconnect { };
+
 
     inherit (self.callPackage ./pkgs/hadoop { 
       jre = pkgs.jre8;
@@ -175,5 +177,7 @@ let
     scalapbc = self.callPackage ./pkgs/scalapbc { };
 
     canonPrinterPPD = self.callPackage ./pkgs/canon-printer-ppd { };
-  } // pkgs.lib.optionalAttrs (!(pkgs ? buildMavenRepositoryFromLockFile)) mvn2nix);
+
+    hprotoc = pkgs.haskellPackages.callPackage ./pkgs/hprotoc { };
+  } // lib.optionalAttrs (!(pkgs ? buildMavenRepositoryFromLockFile)) mvn2nix);
 in scope.packages scope
