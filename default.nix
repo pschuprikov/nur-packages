@@ -10,7 +10,7 @@ let
 
   scope = lib.makeScope pkgs.newScope (self: rec {
     # The `lib`, `modules`, and `overlay` names are special
-    lib = lib // import ./lib { inherit pkgs; }; # functions
+    lib = pkgs.lib // import ./lib { inherit pkgs; }; # functions
     modules = import ./modules; # NixOS modules
     overlays = import ./overlays; # nixpkgs overlays
 
