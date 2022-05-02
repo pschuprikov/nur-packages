@@ -1,6 +1,7 @@
-{ version, sha256, extraPreConfigure ? "", patches ? [] }:
-{ stdenv, lib, bison, flex, qtbase, openscenegraph, openmpi, python3, fetchurl, perl
-, wrapQtAppsHook, mode ? "release", cppStandard ? null }:
+{ version, sha256, extraPreConfigure ? "", patches ? [ ] }:
+{ stdenv, lib, bison, flex, qtbase, openscenegraph, openmpi, python3, fetchurl
+, xlibs, perl, autoPatchelfHook, wrapQtAppsHook, alsa-lib, gtk3, dconf
+, swt, gsettings-desktop-schemas, mode ? "release", cppStandard ? null }:
 let
   pythonWithDeps = python3.withPackages
     (pkgs: with pkgs; [ posix_ipc numpy scipy pandas matplotlib ]);
@@ -17,8 +18,8 @@ in stdenv.mkDerivation rec {
     substituteInPlace ./src/utils/Makefile \
       --replace '#!/bin/sh' '#!${stdenv.shell}'
     substituteInPlace ./Makefile.inc.in \
-      --replace '$(OMNETPP_ROOT)/images' '$(out)/images' \
-      --replace '$(OMNETPP_ROOT)/lib' '$(out)/lib'
+      --replace '$(OMNETPP_ROOT)/images' "$out/images" \
+      --replace '$(OMNETPP_ROOT)/lib' "$out/lib"
     patchShebangs ./src/utils/
   '';
   src = fetchurl {
@@ -33,12 +34,36 @@ in stdenv.mkDerivation rec {
     export PATH=$PWD/bin:$PATH
     ${extraPreConfigure}
   '';
+
+  preBuild = ''
+    export PATH=$PWD/bin:$PATH
+  '';
+
   installPhase = ''
     mkdir -p $out
-    cp -vr Makefile.inc lib bin include images $out/
+    cp -vr Makefile.inc ide lib bin include images $out/
+  '';
+  preFixup = ''
+    substituteInPlace $out/bin/omnetpp \
+      --replace '$IDEDIR/error.log' '$HOME/.omnetpp/error.log'
+    wrapProgram $out/bin/omnetpp \
+      --prefix GIO_EXTRA_MODULES : "${lib.getLib dconf}/lib/gio/modules" \
+      --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH" \
+      --add-flags "-configuration \$HOME/.omnetpp/configuration"
+
+    # ensure omnetpp.ini does not try to use a justj jvm, as those aren't compatible with nix
+    ${perl}/bin/perl -i -p0e 's|-vm\nplugins/org.eclipse.justj.*/jre/bin\n||' $out/ide/omnetpp.ini
   '';
   makeFlags = [ "MODE=${mode}" ];
   enableParallelBuilding = true;
-  nativeBuildInputs = [ perl bison flex pythonWithDeps wrapQtAppsHook ];
-  buildInputs = [ openscenegraph openmpi ];
+  nativeBuildInputs =
+    [ perl bison flex pythonWithDeps wrapQtAppsHook autoPatchelfHook swt ];
+  buildInputs = [
+    openscenegraph
+    openmpi
+    xlibs.libXtst
+    alsa-lib
+    gtk3
+    gsettings-desktop-schemas
+  ];
 }

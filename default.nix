@@ -19,7 +19,7 @@ let
     ns-2 = self.callPackage ./pkgs/ns2 { };
 
     qt5 = lib.makeScope pkgs.qt5.newScope (self: rec {
-      inherit (self.callPackage ./pkgs/omnetpp { }) omnetpp_5_6_2 omnetpp_6_0;
+      inherit (self.callPackage ./pkgs/omnetpp { }) omnetpp_5_6_2 omnetpp_6_0 omnetpp_5_7;
       omnetpp = omnetpp_5_6_2;
       inherit (self.callPackage ./pkgs/omnetpp-inet { }) omnetpp-inet_4_2_5;
       omnetpp-inet = omnetpp-inet_4_2_5;
