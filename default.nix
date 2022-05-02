@@ -45,8 +45,6 @@ let
 
     anyconnect = self.callPackage ./pkgs/anyconnect { };
 
-    maven_3_2_5 = self.callPackage ./pkgs/apache-maven { };
-
     inherit (self.callPackage ./pkgs/hadoop { 
       jre = pkgs.jre8;
       maven = pkgs.maven.override { jdk = pkgs.jdk8; };
