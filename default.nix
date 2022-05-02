@@ -45,6 +45,7 @@ let
 
     anyconnect = self.callPackage ./pkgs/anyconnect { };
 
+    maven_3_2_5 = self.callPackage ./pkgs/apache-maven { };
 
     inherit (self.callPackage ./pkgs/hadoop { 
       jre = pkgs.jre8;
@@ -171,6 +172,12 @@ let
     tcltl = self.callPackage ./pkgs/tcltl { 
       autoreconfHook = autoreconfHook269;
     };
+
+    storm_1_2_4 = self.callPackage ./pkgs/storm/1_2_4.nix { jdk = pkgs.jdk8; };
+    storm_2_3_0 = self.callPackage ./pkgs/storm/2_3_0.nix { };
+    storm = storm_2_3_0;
+
+    zookeeper_3_4_14 = self.callPackage ./pkgs/zookeeper/3_4_14.nix { };
 
     ncmpcpp = self.callPackage ./pkgs/ncmpcpp { };
 
