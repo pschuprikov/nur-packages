@@ -1,6 +1,6 @@
 let 
   mvn2nix = import (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz") {};
-in { pkgs ? import <nixpkgs> { } }:
+in { nixpkgsPath ? <nixpkgs>, pkgs ? import nixpkgsPath { } }:
 let
   lib = pkgs.lib;
   autoreconfHook269 = if pkgs ? autoreconfHook269 then
@@ -68,6 +68,8 @@ let
       protobuf = pkgs.protobuf3_10;
       intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
     };
+
+    protobuf3_2 = self.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
 
     intelSGXPackages_2_7_1-debug = intelSGXPackages_2_7_1.override {
           debugMode = true;
@@ -176,6 +178,8 @@ let
     storm = storm_2_3_0;
 
     zookeeper_3_4_14 = self.callPackage ./pkgs/zookeeper/3_4_14.nix { };
+
+    grpc_1_3_2 = self.callPackage ./pkgs/grpc { protobuf = pkgs.protobuf3_1; };
 
     ncmpcpp = self.callPackage ./pkgs/ncmpcpp { };
 

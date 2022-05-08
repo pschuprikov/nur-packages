@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/share/${name}
-    mv public $out/docs
+    mv public $out/public
     mv examples $out/share/${name}/.
 
     mv external extlib* lib $out/.

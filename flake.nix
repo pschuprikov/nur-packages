@@ -12,7 +12,7 @@
         overlays = [ mvn2nix.overlay ];
       };
       lib = pkgs.lib;
-      nur = import self { pkgs = pkgs; };
+      nur = import self { nixpkgsPath = nixpkgs; pkgs = pkgs; };
       intelSGXPackages_2_7_1 =
         nur.intelSGXPackages_2_7_1.override { debugMode = true; };
     in {
@@ -20,5 +20,6 @@
         lib.filterAttrs (n: d: lib.isDerivation d && !(d.meta.broken or false))
         (nur // nur.qt5);
       inherit (nur) overlays;
+      nixosModules = import ./modules;
     };
 }
