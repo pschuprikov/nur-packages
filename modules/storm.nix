@@ -17,8 +17,12 @@ let
     storm.log.dir: "/var/log/storm"
     storm.log4j2.conf.dir: "$out/log4j2"
     ui.port: ${toString cfg.ui.port}
+    topology.environment:
+  '' + 
+    lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: " ${name}: \"${value}\"") cfg.extraTopologyEnvironment) + "\n" + ''
     blobstore.dir: "/var/lib/storm/blobstore"
-  '' + lib.optionalString cfg.debug ''
+  '' + 
+    lib.optionalString cfg.debug ''
     nimbus.childopts: "-Xmx1024m -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005"
   '' +
   ''
@@ -76,6 +80,11 @@ in {
         description = "Nimbus seeds";
         default = [ "localhost" ];
       };
+    };
+    extraTopologyEnvironment = mkOption {
+      type = types.attrsOf types.str;
+      description = "Environment variables for topology execution";
+      default = {};
     };
   };
 
