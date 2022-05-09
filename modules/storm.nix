@@ -6,6 +6,7 @@ let
     mkdir -p $out
     cp --no-preserve=mode -R ${cfg.package}/conf/* $out
     cat <<EOF >$out/storm.yaml
+    nimbus.thrift.port: ${toString cfg.nimbus.thriftPort}
     nimbus.seeds:
   '' + 
     lib.concatMapStringsSep "\n" (srv: " - \"${srv}\"") cfg.supervisor.nimbusSeeds + "\n" + ''
@@ -54,6 +55,11 @@ in {
     };
     nimbus = {
       enable = mkEnableOption "Apache Storm -- Nimbus";
+      thriftPort = mkOption {
+        type = types.int;
+        description = "Nimbus thrift port";
+        default = 6627;
+      };
     };
     ui = {
       enable = mkEnableOption "Apache Storm -- UI";
