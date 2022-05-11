@@ -1,0 +1,127 @@
+From 0b8a0dabb02c654decc4f3ce4e6074d6abbd652d Mon Sep 17 00:00:00 2001
+From: Pavel Chuprikov <pschuprikov@gmail.com>
+Date: Tue, 10 May 2022 14:26:40 +0200
+Subject: [PATCH 4/4] fix pkg-config generate (based on 7bb7506)
+
+---
+ CMakeLists.txt                  | 73 ++++++++++++++++++++++++++++++++-
+ cmake/pkg-config-template.pc.in | 12 ++++++
+ 2 files changed, 83 insertions(+), 2 deletions(-)
+ create mode 100644 cmake/pkg-config-template.pc.in
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e0142406bf..5a69528012 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -43,7 +43,8 @@ set(PACKAGE_VERSION   "1.3.2")
+ set(PACKAGE_STRING    "${PACKAGE_NAME} ${PACKAGE_VERSION}")
+ set(PACKAGE_TARNAME   "${PACKAGE_NAME}-${PACKAGE_VERSION}")
+ set(PACKAGE_BUGREPORT "https://github.com/grpc/grpc/issues/")
+-project(${PACKAGE_NAME} C CXX)
++set(gRPC_CORE_VERSION "3.0.0")
++project(${PACKAGE_NAME} LANGUAGES C CXX)
+ 
+ # Options
+ option(gRPC_BUILD_TESTS "Build tests" OFF)
+@@ -200,7 +201,7 @@ elseif("${gRPC_PROTOBUF_PROVIDER}" STREQUAL "package")
+     find_package(Protobuf MODULE)
+     set(_gRPC_FIND_PROTOBUF "if(NOT Protobuf_FOUND)\n  find_package(Protobuf)\nendif()")
+   endif()
+-  set(PROTOBUF_WELLKNOWN_IMPORT_DIR /usr/local/include)
++  set(PROTOBUF_WELLKNOWN_IMPORT_DIR /var/empty/local/include)
+ endif()
+ 
+ if("${gRPC_SSL_PROVIDER}" STREQUAL "module")
+@@ -13836,3 +13837,71 @@ foreach(_config gRPCConfig gRPCConfigVersion)
+     DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+   )
+ endforeach()
++
++# Function to generate pkg-config files.
++function(generate_pkgconfig name description version requires
++                            libs libs_private output_filename)
++  set(PC_NAME "${name}")
++  set(PC_DESCRIPTION "${description}")
++  set(PC_VERSION "${version}")
++  set(PC_REQUIRES "${requires}")
++  set(PC_LIB "${libs}")
++  set(PC_LIBS_PRIVATE "${libs_private}")
++  set(output_filepath "${grpc_BINARY_DIR}/libs/opt/pkgconfig/${output_filename}")
++  configure_file(
++    "${grpc_SOURCE_DIR}/cmake/pkg-config-template.pc.in"
++    "${output_filepath}"
++    @ONLY)
++  install(FILES "${output_filepath}"
++    DESTINATION "lib/pkgconfig/")
++endfunction()
++
++# gpr .pc file
++generate_pkgconfig(
++  "gpr"
++  "gRPC platform support library"
++  "${gRPC_CORE_VERSION}"
++  "absl_base absl_cord absl_core_headers absl_memory absl_optional absl_random_random absl_status absl_str_format absl_strings absl_synchronization absl_time"
++  "-lgpr"
++  ""
++  "gpr.pc")
++
++# grpc .pc file
++generate_pkgconfig(
++  "gRPC"
++  "high performance general RPC framework"
++  "${gRPC_CORE_VERSION}"
++  "gpr openssl absl_base absl_bind_front absl_cord absl_core_headers absl_flat_hash_map absl_flat_hash_set absl_hash absl_inlined_vector absl_memory absl_optional absl_random_random absl_span absl_status absl_statusor absl_str_format absl_strings absl_synchronization absl_time absl_type_traits absl_utility absl_variant"
++  "-lgrpc -lre2 -lcares -lz"
++  ""
++  "grpc.pc")
++
++# grpc_unsecure .pc file
++generate_pkgconfig(
++  "gRPC unsecure"
++  "high performance general RPC framework without SSL"
++  "${gRPC_CORE_VERSION}"
++  "gpr absl_base absl_bind_front absl_cord absl_core_headers absl_flat_hash_map absl_flat_hash_set absl_hash absl_inlined_vector absl_memory absl_optional absl_random_random absl_span absl_status absl_statusor absl_str_format absl_strings absl_synchronization absl_time absl_type_traits absl_utility absl_variant"
++  "-lgrpc_unsecure"
++  ""
++  "grpc_unsecure.pc")
++
++# grpc++ .pc file
++generate_pkgconfig(
++  "gRPC++"
++  "C++ wrapper for gRPC"
++  "${PACKAGE_VERSION}"
++  "grpc absl_base absl_bind_front absl_cord absl_core_headers absl_flat_hash_map absl_flat_hash_set absl_hash absl_inlined_vector absl_memory absl_optional absl_random_random absl_span absl_status absl_statusor absl_str_format absl_strings absl_synchronization absl_time absl_type_traits absl_utility absl_variant"
++  "-lgrpc++"
++  ""
++  "grpc++.pc")
++
++# grpc++_unsecure .pc file
++generate_pkgconfig(
++  "gRPC++ unsecure"
++  "C++ wrapper for gRPC without SSL"
++  "${PACKAGE_VERSION}"
++  "grpc_unsecure absl_base absl_bind_front absl_cord absl_core_headers absl_flat_hash_map absl_flat_hash_set absl_hash absl_inlined_vector absl_memory absl_optional absl_random_random absl_span absl_status absl_statusor absl_str_format absl_strings absl_synchronization absl_time absl_type_traits absl_utility absl_variant"
++  "-lgrpc++_unsecure"
++  ""
++  "grpc++_unsecure.pc")
+diff --git a/cmake/pkg-config-template.pc.in b/cmake/pkg-config-template.pc.in
+new file mode 100644
+index 0000000000..d56154bb3a
+--- /dev/null
++++ b/cmake/pkg-config-template.pc.in
+@@ -0,0 +1,12 @@
++prefix=@CMAKE_INSTALL_PREFIX@
++exec_prefix=${prefix}
++includedir=${prefix}/include
++libdir=${exec_prefix}/lib
++
++Name: @PC_NAME@
++Description: @PC_DESCRIPTION@
++Version: @PC_VERSION@
++Cflags: -I${includedir}
++Requires: @PC_REQUIRES@
++Libs: -L${libdir} @PC_LIB@
++Libs.private: @PC_LIBS_PRIVATE@
+-- 
+2.33.3
+

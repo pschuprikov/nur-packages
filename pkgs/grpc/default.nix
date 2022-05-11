@@ -33,6 +33,13 @@ stdenv.mkDerivation rec {
   buildInputs = [ c-ares.cmake-config openssl protobuf ]
     ++ lib.optionals stdenv.isLinux [ libnsl ];
 
+  patches = [ 
+    ./0001-don-t-redeclare-gettid.patch 
+    ./0002-fix-CMakeLists.txt.patch
+    ./0003-update-for-newer-openssl.patch
+    ./0004-fix-pkg-config-generate-based-on-7bb7506.patch
+    ];
+
   cmakeFlags = [
     "-DgRPC_ZLIB_PROVIDER=package"
     "-DgRPC_CARES_PROVIDER=package"

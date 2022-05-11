@@ -1,0 +1,25 @@
+From 0a7736d43ea2cf284183889935c727f20802cfe0 Mon Sep 17 00:00:00 2001
+From: Pavel Chuprikov <pschuprikov@gmail.com>
+Date: Tue, 10 May 2022 11:15:26 +0200
+Subject: [PATCH 1/4] don't redeclare gettid
+
+---
+ src/core/lib/support/log_linux.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/core/lib/support/log_linux.c b/src/core/lib/support/log_linux.c
+index 299b377373..ad4e2c96cb 100644
+--- a/src/core/lib/support/log_linux.c
++++ b/src/core/lib/support/log_linux.c
+@@ -54,8 +54,6 @@
+ #include <time.h>
+ #include <unistd.h>
+ 
+-static long gettid(void) { return syscall(__NR_gettid); }
+-
+ void gpr_log(const char *file, int line, gpr_log_severity severity,
+              const char *format, ...) {
+   char *message = NULL;
+-- 
+2.33.3
+
