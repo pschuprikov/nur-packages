@@ -25,6 +25,43 @@ let
       omnetpp-inet = omnetpp-inet_4_2_5;
     });
 
+    p4-tutorials = lib.makeScope scope.newScope (self: {
+      buildPackages = {
+        protobuf = pkgs.buildPackages.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
+      };
+      python3 = pkgs.python37;
+      protobuf = scope.protobuf3_2;
+      grpc = scope.grpc_1_3_2;
+      pi = self.callPackage ./pkgs/p4lang/PI/41358da.nix {};
+      bmv2 = self.callPackage ./pkgs/p4lang/behavioral-model/b447ac4.nix { };
+      p4c = self.callPackage ./pkgs/p4lang/p4c/69e132d0d.nix { };
+      mininet = pkgs.mininet.override { python3 = self.python3; };
+      shell = 
+        let 
+          pythonPackages = pkgs.python37Packages.overrideScope (py_self: py_super: {
+            protobuf = py_super.protobuf.override { inherit (self) protobuf buildPackages; };
+            grpcio = (py_super.grpcio.override { inherit (self) grpc; }).overridePythonAttrs (attrs: {
+              inherit (self.grpc) patches;
+              GRPC_PYTHON_LDFLAGS = "-lssl";
+              propagatedBuildInputs = attrs.propagatedBuildInputs ++ [ py_self.setuptools ];
+            });
+            pi-python = py_self.toPythonModule self.pi;
+          });
+          python = pythonPackages.python.withPackages (ps: [
+            ps.psutil
+            ps.mininet-python
+            pythonPackages.pi-python
+            pythonPackages.protobuf
+            pythonPackages.grpcio
+          ]);
+        in pkgs.mkShell {
+          nativeBuildInputs = [ pkgs.nettools self.mininet python self.bmv2.targets.simple_switch_grpc self.p4c ];
+          passthru = {
+            inherit python pythonPackages;
+          };
+        };
+    });
+
     buildArb = self.callPackage ./pkgs/bioinf/arb/buildArb.nix { };
     arbcommon = self.callPackage ./pkgs/bioinf/arb/common { };
     arbcore = self.callPackage ./pkgs/bioinf/arb/core { };
