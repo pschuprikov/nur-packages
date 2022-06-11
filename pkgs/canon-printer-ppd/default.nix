@@ -2,14 +2,14 @@
 stdenv.mkDerivation {
   name = "canon-ppd";
   src = fetchurl {
-    url = "file://CQue_Linux_v4.0.8_64_EN.tar.gz";
+    url = "file://${./CQue_Linux_v4.0.8_64_EN.tar.gz}";
     sha256 = "sha256-OJM+kb7Dp60Egj59xjyEeRyjEUadiM2GeyRoI6IHCko=";
   };
 
   buildInputs = [ autoPatchelfHook ];
 
   patchPhase = ''
-    autoPatchelfFile sicgsfilter
+    autoPatchelf sicgsfilter
   '';
 
   buildPhase = ''
