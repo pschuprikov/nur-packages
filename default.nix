@@ -107,6 +107,7 @@ let
     };
 
     protobuf3_2 = self.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
+    protobuf2_5 = self.callPackage ./pkgs/protobuf/2.5.nix { inherit nixpkgsPath; };
 
     intelSGXPackages_2_7_1-debug = intelSGXPackages_2_7_1.override {
           debugMode = true;
