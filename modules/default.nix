@@ -1,3 +1,3 @@
 {
-  storm = ./storm.nix;
+  storm = import ./storm.nix;
 }
