@@ -1,5 +1,5 @@
 { lib, stdenv, fetchurl, makeWrapper, pkg-config, which, maven, cmake, jre, jdk8, bash
-, coreutils, glibc, protobuf2_5, fuse, snappy, zlib, bzip2, openssl, openssl_1_0_2, fetchpatch, libtirpc, javaPackages, buildMaven, buildMavenRepositoryFromLockFile
+, coreutils, glibc, protobuf2_5, fuse, snappy, zlib, bzip2, openssl, fetchpatch, libtirpc, javaPackages, buildMaven, buildMavenRepositoryFromLockFile
 }:
 
 let
