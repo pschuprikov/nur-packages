@@ -216,7 +216,8 @@ let
 
     zookeeper_3_4_14 = self.callPackage ./pkgs/zookeeper/3_4_14.nix { };
 
-    grpc_1_3_2 = self.callPackage ./pkgs/grpc { protobuf = self.protobuf3_2; };
+    grpc_1_3_2 = self.callPackage ./pkgs/grpc/1_3_2.nix { protobuf = self.protobuf3_2; };
+    grpc_1_17_0 = self.callPackage ./pkgs/grpc/1_17_0.nix { protobuf = pkgs.protobuf3_6; };
 
     ncmpcpp = self.callPackage ./pkgs/ncmpcpp { };
 

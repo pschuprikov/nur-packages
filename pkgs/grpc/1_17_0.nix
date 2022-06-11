@@ -17,13 +17,14 @@
 
 stdenv.mkDerivation rec {
   pname = "grpc";
-  version = "1.3.2"; # N.B: if you change this, change pythonPackages.grpcio-tools to a matching version too
+  version = "1.17.0"; # N.B: if you change this, change pythonPackages.grpcio-tools to a matching version too
+  core_version = "7.0.0";
 
   src = fetchFromGitHub {
     owner = "grpc";
     repo = "grpc";
     rev = "v${version}";
-    sha256 = "sha256-G7KI8qZB96TXcSpK5OgmL7GkhDk64ImToEDekCQbg1c=";
+    sha256 = "sha256-cNzi5zltc9HeBeO1ok+PKt/dqdLtRxeXA5+HQ4/IVxo=";
     fetchSubmodules = true;
   };
 
@@ -33,12 +34,13 @@ stdenv.mkDerivation rec {
   buildInputs = [ c-ares.cmake-config openssl protobuf ]
     ++ lib.optionals stdenv.isLinux [ libnsl ];
 
-  patches = [ 
-    ./0001-don-t-redeclare-gettid.patch 
-    ./0002-fix-CMakeLists.txt.patch
-    ./0003-update-for-newer-openssl.patch
-    ./0004-fix-pkg-config-generate-based-on-7bb7506.patch
-    ];
+  postPatch = /* add pkg-config generation  */ ''
+    cp ${./pkg-config-templace.pc.in} cmake/pkg-config-template.pc.in
+    sed -e '/^project(/iset(gRPC_CORE_VERSION "${core_version}")' -i CMakeLists.txt
+    echo "include(${./GeneratePkgconfig.cmake})" >> CMakeLists.txt
+  '' + /* update for the new glibc */ ''
+    sed -e '/syscall(__NR_gettid)/d' -i src/core/lib/gpr/log_linux.cc
+  '';
 
   cmakeFlags = [
     "-DgRPC_ZLIB_PROVIDER=package"
