@@ -10,4 +10,38 @@
       };
     in llvmPackages;
   };
+  gogolFixOverlay = self: super: {
+    haskellPackages = super.haskellPackages.override {
+      overrides = selfHaskell: superHaskell:
+        let
+          gogol_src = super.fetchFromGitHub {
+            owner = "brendanhay";
+            repo = "gogol";
+            rev = "494098af1709d32b75b0be41157547ae7a2bd89d";
+            sha256 = "sha256-qoqLpffy6m2vLgmURcCpOQAdSx7OJoIJSHzz6bHUhm4=";
+          };
+          lib = super.haskell.lib;
+          override_gogol_src = drv:
+            lib.overrideSrc drv {
+              version = "1.0.0.0";
+              src = gogol_src;
+            };
+        in {
+
+          gogol-core =
+            (lib.overrideCabal (override_gogol_src (lib.markUnbroken superHaskell.gogol-core))
+              (drv: {
+                patches = [ ];
+                buildDepends = drv.buildDepends or [ ]
+                  ++ [ selfHaskell.base64 ];
+              })).overrideAttrs
+            (attrs: { sourceRoot = "source/lib/gogol-core"; });
+          gogol = (override_gogol_src superHaskell.gogol).overrideAttrs
+            (attrs: { sourceRoot = "source/lib/gogol"; });
+          gogol-drive = (override_gogol_src
+            (lib.markUnbroken superHaskell.gogol-drive)).overrideAttrs
+            (attrs: { sourceRoot = "source/lib/services/gogol-drive"; });
+        };
+    };
+  };
 }
