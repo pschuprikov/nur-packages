@@ -1,7 +1,8 @@
 {
   description = "NUR flake";
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
   inputs.mvn2nix.url = "github:fzakaria/mvn2nix";
+  inputs.mvn2nix.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { self, nixpkgs, mvn2nix }:
     let
