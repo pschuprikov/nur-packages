@@ -1,6 +1,6 @@
 { version, sha256, extraPreConfigure ? "", patches ? [ ] }:
 { stdenv, lib, bison, flex, qtbase, openscenegraph, openmpi, python3, fetchurl
-, xlibs, perl, autoPatchelfHook, wrapQtAppsHook, alsa-lib, gtk3, dconf
+, xorg, perl, autoPatchelfHook, wrapQtAppsHook, alsa-lib, gtk3, dconf
 , swt, gsettings-desktop-schemas, mode ? "release", cppStandard ? null }:
 let
   pythonWithDeps = python3.withPackages
@@ -61,7 +61,7 @@ in stdenv.mkDerivation rec {
   buildInputs = [
     openscenegraph
     openmpi
-    xlibs.libXtst
+    xorg.libXtst
     alsa-lib
     gtk3
     gsettings-desktop-schemas

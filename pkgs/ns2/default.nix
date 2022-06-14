@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, autoconf, tk, tcl, otcl, tclcl, xlibs, libpcap, perl }:
+{ lib, stdenv, fetchurl, autoconf, tk, tcl, otcl, tclcl, xorg, libpcap, perl }:
 stdenv.mkDerivation rec {
   version = "2.35";
 
@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ 
     perl 
     libpcap
-    xlibs.libX11 xlibs.libXt xlibs.libXext 
+    xorg.libX11 xorg.libXt xorg.libXext 
     ];
 
   preInstall = ''

@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, autoreconfHook, xlibs, tk, tcl }:
+{ lib, stdenv, fetchurl, autoreconfHook, xorg, tk, tcl }:
 stdenv.mkDerivation rec {
   version = "1.14";
   name = "otcl-${version}";
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
       --replace 'TK_H_PLACES_D="$d' 'TK_H_PLACES_D="${tk.dev}/include'
   '';
 
-  nativeBuildInputs = [ autoreconfHook xlibs.libX11 xlibs.libXt ];
+  nativeBuildInputs = [ autoreconfHook xorg.libX11 xorg.libXt ];
 
   configureFlags = [
     "--with-tcl=${tcl}"
