@@ -1,7 +1,7 @@
 { version, sha256, extraPreConfigure ? "", patches ? [ ] }:
 { stdenv, lib, bison, flex, qtbase, openscenegraph, openmpi, python3, fetchurl
 , xorg, perl, autoPatchelfHook, wrapQtAppsHook, alsa-lib, gtk3, dconf
-, swt, gsettings-desktop-schemas, mode ? "release", cppStandard ? null }:
+, swt, gsettings-desktop-schemas, mode ? null, cppStandard ? null }:
 let
   pythonWithDeps = python3.withPackages
     (pkgs: with pkgs; [ posix_ipc numpy scipy pandas matplotlib ]);
@@ -54,7 +54,7 @@ in stdenv.mkDerivation rec {
     # ensure omnetpp.ini does not try to use a justj jvm, as those aren't compatible with nix
     ${perl}/bin/perl -i -p0e 's|-vm\nplugins/org.eclipse.justj.*/jre/bin\n||' $out/ide/omnetpp.ini
   '';
-  makeFlags = [ "MODE=${mode}" ];
+  makeFlags = lib.optional (mode != null) "MODE=${mode}";
   enableParallelBuilding = true;
   nativeBuildInputs =
     [ perl bison flex pythonWithDeps wrapQtAppsHook autoPatchelfHook swt ];
