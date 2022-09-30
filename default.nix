@@ -102,11 +102,14 @@ let
       self.callPackage ./pkgs/intel-sgx-dcap-prebuilt/1_8.nix { };
 
     intelSGXPackages_2_7_1 = self.callPackage ./pkgs/intel-sgx/2_7_1.nix {
-      protobuf = pkgs.protobuf3_10;
+      stdenv = pkgs.gcc9Stdenv;
+      protobuf = self.protobuf3_10;
       intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
     };
 
     protobuf3_2 = self.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
+    protobuf3_6 = self.callPackage ./pkgs/protobuf/3.6.nix { inherit nixpkgsPath; };
+    protobuf3_10 = self.callPackage ./pkgs/protobuf/3.10.nix { inherit nixpkgsPath; };
     protobuf2_5 = self.callPackage ./pkgs/protobuf/2.5.nix { inherit nixpkgsPath; };
 
     intelSGXPackages_2_7_1-debug = intelSGXPackages_2_7_1.override {
