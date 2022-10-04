@@ -62,6 +62,8 @@ let
         };
     });
 
+    p4-tutorials_pi = p4-tutorials.pi;
+
     buildArb = self.callPackage ./pkgs/bioinf/arb/buildArb.nix { };
     arbcommon = self.callPackage ./pkgs/bioinf/arb/common { };
     arbcore = self.callPackage ./pkgs/bioinf/arb/core { };
