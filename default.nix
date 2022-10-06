@@ -210,6 +210,7 @@ let
     autofirma = self.callPackage ./pkgs/autofirma { };
     spot = self.callPackage ./pkgs/spot/default.nix {
       autoreconfHook = autoreconfHook269;
+      stdenv = pkgs.gcc9Stdenv;
     };
     tchecker = self.callPackage ./pkgs/tchecker { };
     tcltl = self.callPackage ./pkgs/tcltl { 
