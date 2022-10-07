@@ -231,6 +231,7 @@ let
     scalapbc = self.callPackage ./pkgs/scalapbc { };
 
     canonPrinterPPD = self.callPackage ./pkgs/canon-printer-ppd { };
+    prism = self.callPackage ./pkgs/prism { };
 
     hprotoc = pkgs.haskellPackages.callPackage ./pkgs/hprotoc { };
   } // lib.optionalAttrs (!(pkgs ? buildMavenRepositoryFromLockFile)) mvn2nix);
