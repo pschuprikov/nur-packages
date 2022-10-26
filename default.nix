@@ -232,6 +232,7 @@ let
 
     canonPrinterPPD = self.callPackage ./pkgs/canon-printer-ppd { };
     prism = self.callPackage ./pkgs/prism { };
+    uppaal = self.callPackage ./pkgs/uppaal { };
 
     hprotoc = pkgs.haskellPackages.callPackage ./pkgs/hprotoc { };
   } // lib.optionalAttrs (!(pkgs ? buildMavenRepositoryFromLockFile)) mvn2nix);
