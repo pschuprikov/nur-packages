@@ -107,6 +107,7 @@ let
       stdenv = pkgs.gcc9Stdenv;
       protobuf = self.protobuf3_10;
       intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
+      openssl = pkgs.openssl_1_1;
     };
 
     protobuf3_2 = self.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
