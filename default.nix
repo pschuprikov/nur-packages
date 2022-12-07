@@ -87,6 +87,7 @@ let
     inherit (self.callPackage ./pkgs/hadoop { 
       jre = pkgs.jre8;
       maven = pkgs.maven.override { jdk = pkgs.jdk8; };
+      stdenv = pkgs.gcc9Stdenv;
     }) hadoop_3_1 hadoop_2_6_5;
 
     hadoop = hadoop_3_1;
