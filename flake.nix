@@ -21,8 +21,9 @@
         packages =
           lib.filterAttrs (n: d: lib.isDerivation d && !(d.meta.broken or false))
           (nur // nur.qt5);
-        inherit (nur) overlays;
-        nixosModules = import ./modules;
       }
-  );
+  ) // {
+      overlays = import ./overlays;
+      nixosModules = import ./modules;
+  };
 }

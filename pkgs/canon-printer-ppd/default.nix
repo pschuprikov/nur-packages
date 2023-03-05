@@ -1,8 +1,9 @@
 { fetchurl, stdenv, autoPatchelfHook, coreutils }:
 stdenv.mkDerivation {
   name = "canon-ppd";
-  src = fetchurl {
-    url = "file://${./CQue_Linux_v4.0.8_64_EN.tar.gz}";
+  src = builtins.path {
+    path = ./. + "/CQue_Linux_v4.0.8_64_EN.tar.gz";
+    recursive = false;
     sha256 = "sha256-OJM+kb7Dp60Egj59xjyEeRyjEUadiM2GeyRoI6IHCko=";
   };
 
