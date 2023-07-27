@@ -93,14 +93,15 @@ let
 
       installFlags = ["-C" "./linux/installer/common/${component}/output" ];
 
+      preBuild = ''
+        buildFlagsArray+="-j''${NIX_BUILD_CORES}"
+      '';
+
       buildFlags = [
         ("${component}"
           + lib.optionalString (component == "sdk" && hasMitigation && !enableMitigation)
           "_no_mitigation")
       ] ++ lib.optional debugMode "DEBUG=1";
-
-
-      enableParallelBuilding = true;
 
       buildInputs = [
         cmake
