@@ -25,6 +25,9 @@ let
     lib.optionalString cfg.debug ''
     nimbus.childopts: "-Xmx1024m -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005"
   '' +
+    lib.optionalString (cfg.hostname != null) ''
+    storm.local.hostname: "${toString cfg.hostname}"
+  '' +
   ''
     EOF
     sed -i -Ee 's/root level="info"/root level="${cfg.loglevel}"/' \
@@ -46,6 +49,11 @@ in {
       type = types.str;
       description = "Log level of the root logger";
       default = "info";
+    };
+    hostname = mkOption {
+      type = types.nullOr types.str;
+      description = "The hostname the supervisors/workers should report to nimbus";
+      default = null;
     };
     debug = mkOption {
       type = types.bool;
