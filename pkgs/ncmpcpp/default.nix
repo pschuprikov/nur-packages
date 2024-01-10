@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchFromGitHub, boost, mpd_clientlib, ncurses, pkgconfig
+{ lib, stdenv, fetchFromGitHub, boost, mpd_clientlib, ncurses, pkg-config
 , readline, libiconv, icu, curl, autoreconfHook
 , outputsSupport ? true # outputs screen
 , visualizerSupport ? false, fftw ? null # visualizer screen
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
     ++ lib.optional clockSupport "--enable-clock"
     ++ lib.optional taglibSupport "--with-taglib";
 
-  nativeBuildInputs = [ autoreconfHook pkgconfig ];
+  nativeBuildInputs = [ autoreconfHook pkg-config ];
 
   buildInputs = [ boost mpd_clientlib ncurses readline libiconv icu curl ]
     ++ lib.optional visualizerSupport fftw
