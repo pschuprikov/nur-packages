@@ -1,6 +1,6 @@
 {
   description = "NUR flake";
-  inputs.nixpkgs.url = "github:pschuprikov/nixpkgs/nixos-23.05";
+  inputs.nixpkgs.url = "github:pschuprikov/nixpkgs/nixos-23.11";
   inputs.mvn2nix.url = "github:fzakaria/mvn2nix";
   inputs.mvn2nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -13,7 +13,7 @@
           config.allowUnfree = true;
           config.permittedInsecurePackages = [
                 "openssl-1.1.1u" 
-                "python-2.7.18.6"
+                "python-2.7.18.7"
           ];
           overlays = [ mvn2nix.overlay ];
         };
