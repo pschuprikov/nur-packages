@@ -10,17 +10,17 @@
       };
     in llvmPackages;
   };
-  gogolFixOverlay = self: super: {
-    haskellPackages = super.haskellPackages.override {
+  gogolFixOverlay = final: prev: {
+    haskellPackages = prev.haskellPackages.override {
       overrides = selfHaskell: superHaskell:
         let
-          gogol_src = super.fetchFromGitHub {
+          gogol_src = prev.fetchFromGitHub {
             owner = "brendanhay";
             repo = "gogol";
             rev = "494098af1709d32b75b0be41157547ae7a2bd89d";
             sha256 = "sha256-qoqLpffy6m2vLgmURcCpOQAdSx7OJoIJSHzz6bHUhm4=";
           };
-          lib = super.haskell.lib;
+          lib = prev.haskell.lib;
           override_gogol_src = drv:
             lib.overrideSrc drv {
               version = "1.0.0.0";
