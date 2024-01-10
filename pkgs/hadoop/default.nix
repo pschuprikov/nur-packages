@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, makeWrapper, pkg-config, which, maven, cmake, jre, jdk8, bash
+{ lib, stdenv, fetchurl, makeWrapper, pkg-config, which, maven, cmake, jre, jdk8, bash, fetchMavenArtifact
 , coreutils, glibc, protobuf2_5, fuse, snappy, zlib, bzip2, openssl, fetchpatch, libtirpc, javaPackages, buildMaven, buildMavenRepositoryFromLockFile
 }:
 
@@ -10,7 +10,7 @@ let
       # compile the hadoop tarball from sources, it requires some patches
       mavenRepository =
        buildMavenRepositoryFromLockFile { file = ./mvn2nix-lock.json; };
-      jdiff = javaPackages.fetchMaven {
+      jdiff = fetchMavenArtifact {
         groupId = "jdiff";
         artifactId = "jdiff";
         version = "1.0.9";
