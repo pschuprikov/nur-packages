@@ -11,21 +11,21 @@
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
-          config.permittedInsecurePackages = [
-                "openssl-1.1.1u" 
-                "python-2.7.18.7"
-          ];
-          overlays = [ mvn2nix.overlay ];
+          config.permittedInsecurePackages =
+            [ "openssl-1.1.1u" "python-2.7.18.7" ];
+          overlays = [ mvn2nix.overlay self.overlays.gogolFixOverlay ];
         };
         lib = pkgs.lib;
-        nur = import self { nixpkgsPath = nixpkgs; pkgs = pkgs; };
+        nur = import self {
+          nixpkgsPath = nixpkgs;
+          pkgs = pkgs;
+        };
       in {
-        packages =
-          lib.filterAttrs (n: d: lib.isDerivation d && !(d.meta.broken or false))
-          (nur // nur.qt5);
-      }
-  ) // {
-      overlays = import ./overlays;
-      nixosModules = import ./modules;
-  };
+        packages = lib.filterAttrs
+          (n: d: lib.isDerivation d && !(d.meta.broken or false))
+          (nur // nur.qt5 // nur.haskellPackages);
+      }) // {
+        overlays = import ./overlays;
+        nixosModules = import ./modules;
+      };
 }

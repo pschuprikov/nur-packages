@@ -25,6 +25,10 @@ let
       omnetpp-inet = omnetpp-inet_4_2_5;
     });
 
+    haskellPackages = {
+      inherit (pkgs.haskellPackages)  gogol gogol-drive gogol-core;
+    };
+
     p4-tutorials = lib.makeScope scope.newScope (self: {
       buildPackages = {
         protobuf = pkgs.buildPackages.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
