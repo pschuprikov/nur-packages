@@ -17,8 +17,8 @@
           gogol_src = prev.fetchFromGitHub {
             owner = "brendanhay";
             repo = "gogol";
-            rev = "494098af1709d32b75b0be41157547ae7a2bd89d";
-            sha256 = "sha256-qoqLpffy6m2vLgmURcCpOQAdSx7OJoIJSHzz6bHUhm4=";
+            rev = "4c1e9b5c7281266b246a8630c9cd714474189283";
+            sha256 = "4AoWNc4OvUbRGYrY0xC2yLNPB1ZGOy0aQHX4MqqRpqc=";
           };
           lib = prev.haskell.lib;
           override_gogol_src = drv:
