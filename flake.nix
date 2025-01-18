@@ -1,6 +1,6 @@
 {
   description = "NUR flake";
-  inputs.nixpkgs.url = "github:pschuprikov/nixpkgs/nixos-24.05";
+  inputs.nixpkgs.url = "github:pschuprikov/nixpkgs/nixos-24.11";
   inputs.mvn2nix.url = "github:fzakaria/mvn2nix";
   inputs.mvn2nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -17,7 +17,6 @@
         };
         lib = pkgs.lib;
         nur = import self {
-          nixpkgsPath = nixpkgs;
           pkgs = pkgs;
         };
       in {

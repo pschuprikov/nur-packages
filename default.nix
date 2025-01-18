@@ -1,6 +1,6 @@
 let 
   mvn2nix = import (fetchTarball "https://github.com/fzakaria/mvn2nix/archive/master.tar.gz") {};
-in { nixpkgsPath ? <nixpkgs>, pkgs ? import nixpkgsPath { } }:
+in { pkgs ? import <nixpkgs> { } }:
 let
   lib = pkgs.lib;
   autoreconfHook269 = if pkgs ? autoreconfHook269 then
@@ -31,7 +31,7 @@ let
 
     p4-tutorials = lib.makeScope scope.newScope (self: {
       buildPackages = {
-        protobuf = pkgs.buildPackages.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
+        protobuf = pkgs.buildPackages.callPackage ./pkgs/protobuf/3.2.nix { };
       };
       python3 = pkgs.python37;
       protobuf = scope.protobuf3_2;
@@ -115,10 +115,10 @@ let
       openssl = pkgs.openssl_1_1;
     };
 
-    protobuf3_2 = self.callPackage ./pkgs/protobuf/3.2.nix { inherit nixpkgsPath; };
-    protobuf3_6 = self.callPackage ./pkgs/protobuf/3.6.nix { inherit nixpkgsPath; };
-    protobuf3_10 = self.callPackage ./pkgs/protobuf/3.10.nix { inherit nixpkgsPath; };
-    protobuf2_5 = self.callPackage ./pkgs/protobuf/2.5.nix { inherit nixpkgsPath; };
+    protobuf3_2 = self.callPackage ./pkgs/protobuf/3.2.nix {};
+    protobuf3_6 = self.callPackage ./pkgs/protobuf/3.6.nix {};
+    protobuf3_10 = self.callPackage ./pkgs/protobuf/3.10.nix {};
+    protobuf2_5 = self.callPackage ./pkgs/protobuf/2.5.nix {};
 
     intelSGXPackages_2_7_1-debug = intelSGXPackages_2_7_1.override {
           debugMode = true;

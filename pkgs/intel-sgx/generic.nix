@@ -3,7 +3,7 @@
 { stdenv, lib, overrideCC, wrapCCWith, fetchFromGitHub, fetchurl
 , autoPatchelfHook, buildEnv, binutils-unwrapped, wrapBintoolsWith, file
 , coreutils, ocaml, autoconf, automake, which, python, libtool, openssl
-, llvmPackages_8, ocamlPackages, perl, cmake, bash, protobuf, curl, fakeroot
+, ocamlPackages, perl, cmake, bash, protobuf, curl, fakeroot
 , intelSGXDCAPPrebuilt, debugMode ? false, enableMitigation ? false }:
 
 assert !hasMitigation -> !enableMitigation;
