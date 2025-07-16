@@ -1,4 +1,4 @@
-{ lib, buildFHSUserEnv, runCommandNoCCLocal, writeScriptBin, fetchurl, fakeroot
+{ lib, buildFHSEnv, runCommandNoCCLocal, writeScriptBin, fetchurl, fakeroot
 , procps }:
 let
   src = fetchurl {
@@ -21,7 +21,7 @@ let
     cp -r /opt/cisco/anyconnect $out/opt/cisco
   '';
 
-  installer = buildFHSUserEnv {
+  installer = buildFHSEnv {
     name = "anyconnect-installer";
 
     targetPkgs = pkgs: with pkgs; [ procps installScript libxml2 glib ];
@@ -52,7 +52,7 @@ let
     ${installer}/bin/anyconnect-installer
   '';
 
-  createAnyconnectScript = args: buildFHSUserEnv {
+  createAnyconnectScript = args: buildFHSEnv {
       inherit (args) name runScript;
 
       targetPkgs = pkgs:

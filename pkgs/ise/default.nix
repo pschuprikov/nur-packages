@@ -1,11 +1,11 @@
-{ lib, buildFHSUserEnv, fetchurl, bash, runCommand }:
+{ lib, buildFHSEnv, fetchurl, bash, runCommand }:
 let
   src = fetchurl {
     url = "file:///dev/null";
     sha256 = "1amd6f6wp4l9zzpsz6y351v4giamdicwg5lswp5azkxvq53b1q6f";
   };
 
-  installer = buildFHSUserEnv {
+  installer = buildFHSEnv {
     name = "batchxsetup";
     targetPkgs = pkgs:
       with pkgs; [
@@ -67,7 +67,7 @@ let
     EOF
     yes Y | ${installer}/bin/batchxsetup --batch batch.cfg || true
   '';
-in buildFHSUserEnv {
+in buildFHSEnv {
   name = "ise";
   targetPkgs = pkgs:
     with pkgs; [
