@@ -1,6 +1,6 @@
 { version, sha256, extraPreConfigure ? "", patches ? [ ] }:
 { stdenv, lib, bison, flex, qtbase, openscenegraph, openmpi, python3, fetchurl
-, xorg, perl, autoPatchelfHook, wrapQtAppsHook, alsa-lib, gtk3, dconf
+, xorg, perl, autoPatchelfHook, wrapQtAppsHook, alsa-lib, gtk3, dconf, libsecret
 , swt, gsettings-desktop-schemas, mode ? null, cppStandard ? null }:
 let
   pythonWithDeps = python3.withPackages
@@ -65,5 +65,6 @@ in stdenv.mkDerivation rec {
     alsa-lib
     gtk3
     gsettings-desktop-schemas
+    libsecret
   ];
 }
