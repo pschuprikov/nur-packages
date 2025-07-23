@@ -3,10 +3,10 @@
 stdenv.mkDerivation rec {
   pname = "inet";
   name = "${pname}-${version}";
-  version = "4.2.5";
+  inherit version;
   src = fetchurl {
     url = "https://github.com/inet-framework/${pname}/releases/download/v${version}/${pname}-${version}-src.tgz";
-    sha256 = "sha256-ThMz014tXjVa/OUL4xUm7Xyw/4X5QCNwSzzg3nzbIz4=";
+    inherit sha256;
   };
   configureScript = "make makefiles";
   makeFlags = [ "MODE=${mode}" ];

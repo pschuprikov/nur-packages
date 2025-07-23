@@ -16,8 +16,8 @@
   }) {};
 
   omnetpp_6_0 = callPackage (import ./common.nix {
-    version = "6.0pre13";
-    sha256 = "sha256-bjXX8DtmdxkwQ9TuOOl5anIoZ07AcwFRT+BoZ2Uet9g=";
+    version = "6.0.3";
+    sha256 = "sha256-4LUPaNp0KLSv7veiiFZdZEIn1L8NPkEgftxxMjzCd4w=";
     extraPreConfigure = ''
       export PYTHONPATH=$PWD/python
       export __omnetpp_root_dir=$PWD
