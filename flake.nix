@@ -1,6 +1,6 @@
 {
   description = "NUR flake";
-  inputs.nixpkgs.url = "github:pschuprikov/nixpkgs/nixos-25.05";
+  inputs.nixpkgs.url = "github:pschuprikov/nixpkgs/nixos-25.11";
   inputs.mvn2nix.url = "github:pschuprikov/mvn2nix";
   inputs.mvn2nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.flake-utils.url = "github:numtide/flake-utils";

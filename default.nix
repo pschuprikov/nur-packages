@@ -79,14 +79,12 @@ let
     infernal = self.callPackage ./pkgs/bioinf/infernal { };
     cd-hit = self.callPackage ./pkgs/bioinf/cd-hit { };
 
-    blast = pkgs.blast.override { stdenv = pkgs.gcc9Stdenv; };
-
     anyconnect = self.callPackage ./pkgs/anyconnect { };
 
     inherit (self.callPackage ./pkgs/hadoop { 
       jre = pkgs.jre8;
       maven = pkgs.maven.override { jdk = pkgs.jdk8; };
-      stdenv = pkgs.gcc9Stdenv;
+      stdenv = pkgs.gcc13Stdenv;
     }) hadoop_3_1 hadoop_2_6_5;
 
     hadoop = hadoop_3_1;
@@ -104,7 +102,7 @@ let
       self.callPackage ./pkgs/intel-sgx-dcap-prebuilt/1_8.nix { };
 
     intelSGXPackages_2_7_1 = self.callPackage ./pkgs/intel-sgx/2_7_1.nix {
-      stdenv = pkgs.gcc9Stdenv;
+      stdenv = pkgs.gcc13Stdenv;
       protobuf = self.protobuf3_10;
       intelSGXDCAPPrebuilt = intelSGXDCAPPrebuilt1_8;
       openssl = pkgs.openssl_1_1;
@@ -171,8 +169,7 @@ let
 
     any2fasta = self.callPackage ./pkgs/bioinf/any2fasta { };
 
-    easyfig =
-      pkgs.pythonPackages.callPackage ./pkgs/bioinf/easyfig { inherit blast; };
+    easyfig = pkgs.python2.pkgs.callPackage ./pkgs/bioinf/easyfig { };
 
     ncbi_tools = self.callPackage ./pkgs/bioinf/ncbi_tools { };
     aragorn = self.callPackage ./pkgs/bioinf/aragorn { };
@@ -183,14 +180,13 @@ let
     mcl = self.callPackage ./pkgs/bioinf/mcl { };
     prank = self.callPackage ./pkgs/bioinf/prank { };
     FastTree = self.callPackage ./pkgs/bioinf/fasttree { };
-    markdown2ctags = pkgs.python3Packages.callPackage ./pkgs/markdown2ctags { };
 
     openenclave = 
       let ocamlPackages = pkgs.ocamlPackages_latest;
        in self.callPackage ./pkgs/openenclave {
         inherit (ocamlPackages) ocaml;
         dune = ocamlPackages.dune or ocamlPackages.dune_2;
-        stdenv = pkgs.gcc9Stdenv;
+        stdenv = pkgs.gcc13Stdenv;
         intel-sgx-sdk = intel-sgx-sdk_2_7_1;
         intel-sgx-psw = intel-sgx-psw_2_7_1;
       };
@@ -211,7 +207,7 @@ let
     autofirma = self.callPackage ./pkgs/autofirma { };
     spot = self.callPackage ./pkgs/spot/default.nix {
       autoreconfHook = autoreconfHook269;
-      stdenv = pkgs.gcc9Stdenv;
+      stdenv = pkgs.gcc13Stdenv;
     };
     tchecker = self.callPackage ./pkgs/tchecker { };
     tcltl = self.callPackage ./pkgs/tcltl { 
