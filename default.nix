@@ -78,7 +78,6 @@ let
     prokka = self.callPackage ./pkgs/bioinf/prokka { };
     infernal = self.callPackage ./pkgs/bioinf/infernal { };
     cd-hit = self.callPackage ./pkgs/bioinf/cd-hit { };
-    compdb = pkgs.python3Packages.callPackage ./pkgs/compdb { };
 
     blast = pkgs.blast.override { stdenv = pkgs.gcc9Stdenv; };
 
