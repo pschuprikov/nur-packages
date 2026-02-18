@@ -37,6 +37,5 @@ in stdenv.mkDerivation rec {
   
   meta = {
     platforms = lib.platforms.linux;
-    broken = blast == null;
   };
 }
